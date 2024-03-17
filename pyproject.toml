@@ -5,7 +5,9 @@ description = "Implementation of Travel Agent 3.0 by @samylovma"
 authors = [
     {name = "Mikhail Samylov", email = "samylov-mikhail@yandex.ru"},
 ]
-dependencies = []
+dependencies = [
+    "python-telegram-bot>=21.0.1",
+]
 requires-python = "==3.12.*"
 readme = "README.md"
 
