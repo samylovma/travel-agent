@@ -1,7 +1,7 @@
 import logging
 from os import getenv
 
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker
 from telegram.ext import Application, MessageHandler, filters
 
 from .callbacks.echo import echo
@@ -24,7 +24,10 @@ def main() -> None:
         .post_init(post_init)
         .build()
     )
+
     application.bot_data["db_engine"] = create_async_engine(getenv("DB_URL"))
+    application.bot_data["db_session_fabric"] = async_sessionmaker(application.bot_data["db_engine"])
+
     application.add_handler(MessageHandler(filters.TEXT, echo))
     application.run_polling()
 
