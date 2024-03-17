@@ -1,0 +1,14 @@
+[project]
+name = "travel-agent-bot"
+version = "1.0"
+description = "Implementation of Travel Agent 3.0 by @samylovma"
+authors = [
+    {name = "Mikhail Samylov", email = "samylov-mikhail@yandex.ru"},
+]
+dependencies = []
+requires-python = "==3.12.*"
+readme = "README.md"
+
+
+[tool.pdm]
+distribution = false
