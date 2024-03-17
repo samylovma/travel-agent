@@ -7,10 +7,18 @@ authors = [
 ]
 dependencies = [
     "python-telegram-bot>=21.0.1",
+    "sqlalchemy[asyncio]>=2.0.28",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
 
 
+[project.optional-dependencies]
+sqlite = [
+    "aiosqlite>=0.20.0",
+]
+postgresql = [
+    "asyncpg>=0.29.0",
+]
 [tool.pdm]
 distribution = false
