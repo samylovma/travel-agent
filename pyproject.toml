@@ -1,5 +1,5 @@
 [project]
-name = "travel-agent-bot"
+name = "travel-agent"
 version = "1.0"
 description = "Implementation of Travel Agent 3.0 by @samylovma"
 readme = "README.md"

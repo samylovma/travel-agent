@@ -13,7 +13,7 @@ from telegram.ext import (
 )
 from advanced_alchemy.base import orm_registry
 
-from .callbacks.settings import (
+from travel_agent.callbacks.settings import (
     settings_age,
     settings_age_answered,
     settings_menu,
@@ -22,9 +22,9 @@ from .callbacks.settings import (
     settings_sex_menu,
     back_to_settings_menu,
 )
-from .callbacks.help import help
-from .callbacks.start import start
-from .context import Context
+from travel_agent.callbacks.help import help
+from travel_agent.callbacks.start import start
+from travel_agent.context import Context
 
 
 async def post_init(application: Application) -> None:

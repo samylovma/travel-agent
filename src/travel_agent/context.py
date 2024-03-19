@@ -2,7 +2,7 @@ from typing import Self, Any
 
 from telegram.ext import CallbackContext, Application
 
-from .repositories import UserRepository
+from travel_agent.repositories import UserRepository
 
 
 class Context(CallbackContext):

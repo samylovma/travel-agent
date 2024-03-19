@@ -1,7 +1,7 @@
 from telegram import Update
 
-from ..context import Context
-from ..middlewares import middlewares
+from travel_agent.context import Context
+from travel_agent.middlewares import middlewares
 
 
 @middlewares

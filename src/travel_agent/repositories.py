@@ -1,6 +1,6 @@
 from advanced_alchemy import SQLAlchemyAsyncRepository
 
-from .models import User
+from travel_agent.models import User
 
 
 class UserRepository(SQLAlchemyAsyncRepository[User]):

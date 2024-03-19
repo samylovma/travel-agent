@@ -3,7 +3,7 @@ import functools
 
 from telegram import Update
 
-from .context import Context
+from travel_agent.context import Context
 
 
 def middlewares[YT, ST, RT](
