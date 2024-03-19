@@ -2,7 +2,7 @@ from typing import Any, Self
 
 from telegram.ext import Application, CallbackContext
 
-from travel_agent.repositories import UserRepository
+from travel_agent.repositories import TravelRepository, UserRepository
 
 
 class Context(CallbackContext):
@@ -16,6 +16,7 @@ class Context(CallbackContext):
         self.data: dict[Any, Any] = {}
 
         self._user_repo: UserRepository | None = None
+        self._travel_repo: TravelRepository | None = None
 
     @property
     def user_repo(self: Self) -> UserRepository:
@@ -24,3 +25,9 @@ class Context(CallbackContext):
                 session=self.data["db_session"], auto_commit=True
             )
         return self._user_repo
+
+    @property
+    def travel_repo(self: Self) -> TravelRepository:
+        if self._travel_repo is None:
+            self._travel_repo = TravelRepository(session=self.data["db_session"])
+        return self._travel_repo

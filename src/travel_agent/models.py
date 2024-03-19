@@ -14,7 +14,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
-class Base(DeclarativeBase, CommonTableAttributes):
+class Base(CommonTableAttributes, DeclarativeBase):
     registry = orm_registry
 
 
@@ -39,8 +39,6 @@ class SexEnum(enum.StrEnum):
 
 
 class Interest(Base):
-    __tablename__ = "interest"
-
     id: Mapped[int] = mapped_column(
         BigInteger(), primary_key=True, unique=True, autoincrement=True
     )
@@ -48,8 +46,6 @@ class Interest(Base):
 
 
 class User(Base):
-    __tablename__ = "user"
-
     id: Mapped[int] = mapped_column(
         BigInteger(), primary_key=True, unique=True, autoincrement=True
     )
@@ -63,8 +59,6 @@ class User(Base):
 
 
 class Location(Base):
-    __tablename__ = "location"
-
     id: Mapped[int] = mapped_column(
         BigInteger(), primary_key=True, unique=True, autoincrement=True
     )
@@ -77,8 +71,6 @@ class Location(Base):
 
 
 class Note(Base):
-    __tablename__ = "note"
-
     id: Mapped[int] = mapped_column(
         BigInteger(), primary_key=True, unique=True, autoincrement=True
     )
@@ -89,8 +81,6 @@ class Note(Base):
 
 
 class Travel(Base):
-    __tablename__ = "travel"
-
     id: Mapped[int] = mapped_column(
         BigInteger(), primary_key=True, unique=True, autoincrement=True
     )
