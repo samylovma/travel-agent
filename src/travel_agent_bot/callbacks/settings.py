@@ -14,7 +14,7 @@ async def settings_menu(update: Update, _: Context) -> None:
                 InlineKeyboardButton("Указать возраст", callback_data="settings_age"),
                 InlineKeyboardButton("Добавить пол", callback_data="settings_sex"),
             )
-        )
+        ),
     )
 
 
@@ -64,7 +64,7 @@ async def settings_sex_menu(update: Update, _: Context) -> None:
             (
                 InlineKeyboardButton("Мужской", callback_data="settings_sex_male"),
                 InlineKeyboardButton("Женский", callback_data="settings_sex_female"),
-                InlineKeyboardButton("Назад", callback_data="settings_sex_back")
+                InlineKeyboardButton("Назад", callback_data="settings_sex_back"),
             )
         )
     )

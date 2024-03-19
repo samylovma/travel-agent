@@ -1,12 +1,19 @@
 from datetime import datetime
 import enum
 
-from sqlalchemy import BigInteger, Column, DateTime, Enum, ForeignKey, LargeBinary, Table
+from sqlalchemy import (
+    BigInteger,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    LargeBinary,
+    Table,
+)
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
 
 
-class Base(DeclarativeBase):
-    ...
+class Base(DeclarativeBase): ...
 
 
 user_to_interest_table = Table(
@@ -20,7 +27,7 @@ user_to_travel_table = Table(
     "user_to_travel",
     Base.metadata,
     Column("user_id", ForeignKey("user.id"), primary_key=True),
-    Column("travel_id", ForeignKey("travel.id"), primary_key=True)
+    Column("travel_id", ForeignKey("travel.id"), primary_key=True),
 )
 
 
@@ -57,7 +64,8 @@ class Location(Base):
     __tablename__ = "location"
 
     id: Mapped[int] = mapped_column(
-        BigInteger(), primary_key=True, unique=True, autoincrement=True)
+        BigInteger(), primary_key=True, unique=True, autoincrement=True
+    )
     travel_id: Mapped[int] = mapped_column(ForeignKey("travel.id"))
     name: Mapped[str]
     lat: Mapped[float]

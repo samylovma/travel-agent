@@ -8,7 +8,7 @@ from .context import Context
 
 
 def middlewares[YT, ST, RT](
-    function: Callable[[Update, Context], Coroutine[YT, ST, RT]]
+    function: Callable[[Update, Context], Coroutine[YT, ST, RT]],
 ) -> Callable[[Update, Context], Coroutine[YT, ST, RT]]:
     @functools.wraps(function)
     async def wrapped(update: Update, context: Context) -> None:
@@ -19,4 +19,5 @@ def middlewares[YT, ST, RT](
                 user = await context.user_repo.create(User(id=update.effective_user.id))
             context.data["user"] = user
             return await function(update, context)
+
     return wrapped
