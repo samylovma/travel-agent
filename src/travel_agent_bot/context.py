@@ -2,7 +2,7 @@ from typing import Self, Any
 
 from telegram.ext import CallbackContext, Application
 
-from .repositories.user import UserRepository
+from .repositories import UserRepository
 
 
 class Context(CallbackContext):
@@ -20,5 +20,7 @@ class Context(CallbackContext):
     @property
     def user_repo(self) -> UserRepository:
         if self._user_repo is None:
-            self._user_repo = UserRepository(session=self.data["db_session"])
+            self._user_repo = UserRepository(
+                session=self.data["db_session"], auto_commit=True
+            )
         return self._user_repo

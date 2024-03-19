@@ -11,9 +11,11 @@ from sqlalchemy import (
     Table,
 )
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
+from advanced_alchemy.base import CommonTableAttributes, orm_registry
 
 
-class Base(DeclarativeBase): ...
+class Base(DeclarativeBase, CommonTableAttributes):
+    registry = orm_registry
 
 
 user_to_interest_table = Table(

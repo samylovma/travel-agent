@@ -11,6 +11,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from advanced_alchemy.base import orm_registry
 
 from .callbacks.settings import (
     settings_age,
@@ -23,14 +24,13 @@ from .callbacks.settings import (
 )
 from .callbacks.help import help
 from .callbacks.start import start
-from .models import Base
 from .context import Context
 
 
 async def post_init(application: Application) -> None:
     engine: AsyncEngine = application.bot_data["db_engine"]
     async with engine.begin() as connection:
-        await connection.run_sync(Base.metadata.create_all)
+        await connection.run_sync(orm_registry.metadata.create_all)
 
 
 def main() -> None:
