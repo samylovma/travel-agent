@@ -12,3 +12,11 @@ dependencies = [
     "advanced-alchemy>=0.7.4",
     "asyncpg>=0.29.0",
 ]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",
+    # Ruff formatter compatibility
+    "W191", "E111", "E114", "E117", "D206", "D300", "Q000", "Q001", "Q002", "Q003", "COM812", "COM819", "ISC001", "ISC002",
+]

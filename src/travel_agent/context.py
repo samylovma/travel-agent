@@ -1,6 +1,6 @@
-from typing import Self, Any
+from typing import Any, Self
 
-from telegram.ext import CallbackContext, Application
+from telegram.ext import Application, CallbackContext
 
 from travel_agent.repositories import UserRepository
 
@@ -18,7 +18,7 @@ class Context(CallbackContext):
         self._user_repo: UserRepository | None = None
 
     @property
-    def user_repo(self) -> UserRepository:
+    def user_repo(self: Self) -> UserRepository:
         if self._user_repo is None:
             self._user_repo = UserRepository(
                 session=self.data["db_session"], auto_commit=True

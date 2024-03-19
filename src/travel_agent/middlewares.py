@@ -1,5 +1,5 @@
-from collections.abc import Callable, Coroutine
 import functools
+from collections.abc import Callable, Coroutine
 
 from telegram import Update
 

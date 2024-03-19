@@ -1,8 +1,8 @@
-from telegram import InlineKeyboardButton, Update, InlineKeyboardMarkup
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 
-from travel_agent.models import SexEnum
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
+from travel_agent.models import SexEnum
 
 
 @middlewares

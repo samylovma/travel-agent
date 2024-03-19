@@ -1,6 +1,7 @@
-from datetime import datetime
 import enum
+from datetime import datetime
 
+from advanced_alchemy.base import CommonTableAttributes, orm_registry
 from sqlalchemy import (
     BigInteger,
     Column,
@@ -10,8 +11,7 @@ from sqlalchemy import (
     LargeBinary,
     Table,
 )
-from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped, relationship
-from advanced_alchemy.base import CommonTableAttributes, orm_registry
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 class Base(DeclarativeBase, CommonTableAttributes):

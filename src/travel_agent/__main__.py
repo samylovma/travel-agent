@@ -1,28 +1,28 @@
 import logging
 from os import getenv
 
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker
+from advanced_alchemy.base import orm_registry
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 from telegram.ext import (
     Application,
-    CommandHandler,
     CallbackQueryHandler,
+    CommandHandler,
     ContextTypes,
     ConversationHandler,
     MessageHandler,
     filters,
 )
-from advanced_alchemy.base import orm_registry
 
+from travel_agent.callbacks.help import help
 from travel_agent.callbacks.settings import (
+    back_to_settings_menu,
     settings_age,
     settings_age_answered,
     settings_menu,
     settings_sex_female,
     settings_sex_male,
     settings_sex_menu,
-    back_to_settings_menu,
 )
-from travel_agent.callbacks.help import help
 from travel_agent.callbacks.start import start
 from travel_agent.context import Context
 
