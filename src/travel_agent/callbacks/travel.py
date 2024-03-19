@@ -55,7 +55,10 @@ async def add_bio(update: Update, context: Context) -> Literal[1]:
 @middlewares
 async def bio(update: Update, context: Context) -> Literal[-1]:
     travel_id = int(context.user_data["travel_id"].split("_")[-1])
-    travel = await context.travel_repo.update_bio(travel_id, update.message.text)
+    travel = await context.travel_repo.get(travel_id)
+    travel.bio = update.message.text
+    travel = await context.travel_repo.update(travel)
+
     await update.effective_message.reply_text(
         f"Сделано!\nИдентификатор: {travel.id}.\nНазвание: {travel.name}.",
         reply_markup=InlineKeyboardMarkup.from_column(

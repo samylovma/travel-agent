@@ -15,11 +15,11 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
-from travel_agent_bot.callbacks.settings import back_to_settings_menu
 
 from travel_agent.callbacks import travel
 from travel_agent.callbacks.help import help
 from travel_agent.callbacks.settings import (
+    back_to_settings_menu,
     settings_age,
     settings_age_answered,
     settings_menu,

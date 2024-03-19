@@ -29,5 +29,7 @@ class Context(CallbackContext):
     @property
     def travel_repo(self: Self) -> TravelRepository:
         if self._travel_repo is None:
-            self._travel_repo = TravelRepository(session=self.data["db_session"])
+            self._travel_repo = TravelRepository(
+                session=self.data["db_session"], auto_commit=True
+            )
         return self._travel_repo
