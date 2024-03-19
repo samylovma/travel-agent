@@ -29,11 +29,13 @@ async def name(update: Update, context: Context) -> int:
         )
         return 1
     await update.effective_message.reply_text(
-        f"Отлично!\nИдентификатор: {travel.id}.\nИмя: {travel.name}.",
+        f"Идентификатор: {travel.id}.\n"
+        f"Название: «{travel.name}».\n"
+        f"Описание: «{travel.bio}».",
         reply_markup=InlineKeyboardMarkup.from_column(
             (
                 InlineKeyboardButton(
-                    "Добавить описание", callback_data=f"travel_bio_{travel.id}"
+                    "Изменить описание", callback_data=f"travel_bio_{travel.id}"
                 ),
                 InlineKeyboardButton(
                     "Добавить локацию", callback_data="travel_add_loc"
@@ -46,7 +48,7 @@ async def name(update: Update, context: Context) -> int:
 
 @middlewares
 async def add_bio(update: Update, context: Context) -> Literal[1]:
-    context.user_data["travel_id"] = update.callback_query.data.split()[-1]
+    context.user_data["travel_id"] = int(update.callback_query.data.split("_")[-1])
     await update.callback_query.answer()
     await update.effective_message.reply_text("Напишите описание для путешествия.")
     return 1
@@ -54,13 +56,15 @@ async def add_bio(update: Update, context: Context) -> Literal[1]:
 
 @middlewares
 async def bio(update: Update, context: Context) -> Literal[-1]:
-    travel_id = int(context.user_data["travel_id"].split("_")[-1])
+    travel_id: int = context.user_data["travel_id"]
     travel = await context.travel_repo.get(travel_id)
     travel.bio = update.message.text
     travel = await context.travel_repo.update(travel)
 
     await update.effective_message.reply_text(
-        f"Сделано!\nИдентификатор: {travel.id}.\nНазвание: {travel.name}.",
+        f"Идентификатор: {travel.id}.\n"
+        f"Название: «{travel.name}».\n"
+        f"Описание: «{travel.bio}».",
         reply_markup=InlineKeyboardMarkup.from_column(
             (
                 InlineKeyboardButton(
