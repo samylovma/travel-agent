@@ -16,9 +16,10 @@ from telegram.ext import (
     filters,
 )
 
-from travel_agent.callbacks import travel
-from travel_agent.callbacks.help import help
-from travel_agent.callbacks.settings import (
+from travel_agent.context import Context
+from travel_agent.handlers import travel
+from travel_agent.handlers.help import help
+from travel_agent.handlers.settings import (
     back_to_settings_menu,
     settings_age,
     settings_age_answered,
@@ -27,8 +28,7 @@ from travel_agent.callbacks.settings import (
     settings_sex_male,
     settings_sex_menu,
 )
-from travel_agent.callbacks.start import start
-from travel_agent.context import Context
+from travel_agent.handlers.start import start
 
 if typing.TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncEngine
@@ -82,20 +82,7 @@ def main() -> None:
         )
     )
 
-    application.add_handler(
-        ConversationHandler(
-            entry_points=[CommandHandler("newtravel", travel.entry_point)],
-            states={1: [MessageHandler(filters.TEXT, travel.name)]},
-            fallbacks=[],
-        )
-    )
-    application.add_handler(
-        ConversationHandler(
-            entry_points=[CallbackQueryHandler(travel.add_bio, "travel_bio")],
-            states={1: [MessageHandler(filters.TEXT, travel.bio)]},
-            fallbacks=[],
-        )
-    )
+    application.add_handlers(travel.create_handlers())
 
     application.run_polling()
 
