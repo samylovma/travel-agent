@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy.exc import IntegrityError
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, Update
+from telegram import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
 from telegram.ext import (
     BaseHandler,
     CallbackQueryHandler,
@@ -14,7 +14,7 @@ from telegram.ext import (
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
 from travel_agent.models import Travel
-from travel_agent.utils import message
+from travel_agent.utils import callback_query, message
 
 
 class NewTravelState(enum.Enum):
@@ -66,9 +66,9 @@ async def newtravel_name(message: Message, context: Context) -> NewTravelState:
         return NewTravelState.NAME
 
     await message.reply_text(
-        f"Идентификатор: {travel.id}.\n"
-        f"Название: «{travel.name}».\n"
-        f"Описание: «{travel.bio}».",
+        f"<b>Идентификатор:</b> {travel.id}.\n"
+        f"<b>Название:</b> «{travel.name}».\n"
+        f"<b>Описание:</b> «{travel.bio}».",
         reply_markup=InlineKeyboardMarkup.from_column(
             (
                 InlineKeyboardButton(
@@ -85,10 +85,13 @@ async def newtravel_name(message: Message, context: Context) -> NewTravelState:
 
 
 @middlewares
-async def change_bio_entry(update: Update, context: Context) -> ChangeBioState:
-    context.user_data["travel_id"] = int(update.callback_query.data.split("_")[-1])
-    await update.callback_query.answer()
-    await update.effective_message.reply_text("Напишите описание для путешествия.")
+@callback_query
+async def change_bio_entry(
+    callback_query: CallbackQuery, context: Context
+) -> ChangeBioState:
+    context.user_data["travel_id"] = int(callback_query.data.split("_")[-1])
+    await callback_query.answer()
+    await callback_query.message.reply_text("Напишите описание для путешествия.")
     return ChangeBioState.BIO
 
 
@@ -96,14 +99,15 @@ async def change_bio_entry(update: Update, context: Context) -> ChangeBioState:
 @message
 async def change_bio_end(message: Message, context: Context) -> ChangeBioState:
     travel_id: int = context.user_data["travel_id"]
-    travel = await context.travel_repo.update(
+    await context.travel_repo.update(
         Travel(id=travel_id, bio=message.text), attribute_names=("bio",)
     )
+    travel = await context.travel_repo.get(travel_id)
 
     await message.reply_text(
-        f"Идентификатор: {travel.id}.\n"
-        f"Название: «{travel.name}».\n"
-        f"Описание: «{travel.bio}».",
+        f"<b>Идентификатор:</b> {travel.id}.\n"
+        f"<b>Название:</b> «{travel.name}».\n"
+        f"<b>Описание:</b> «{travel.bio}».",
         reply_markup=InlineKeyboardMarkup.from_column(
             (
                 InlineKeyboardButton(
