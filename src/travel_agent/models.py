@@ -56,7 +56,7 @@ class User(Base):
     bio: Mapped[str | None]
 
     travels: Mapped[set["Travel"]] = relationship(
-        secondary=user_to_travel_table, lazy="selectin"
+        secondary=user_to_travel_table, back_populates="users", lazy="selectin"
     )
     interests: Mapped[set[Interest]] = relationship(secondary=user_to_interest_table)
 
@@ -91,7 +91,7 @@ class Travel(Base):
     bio: Mapped[str | None]
 
     users: Mapped[set[User]] = relationship(
-        secondary=user_to_travel_table, lazy="selectin"
+        secondary=user_to_travel_table, back_populates="travels", lazy="selectin"
     )
     locations: Mapped[set[Location]] = relationship()
     notes: Mapped[set[Note]] = relationship()

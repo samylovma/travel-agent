@@ -1,13 +1,15 @@
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from telegram.ext import Application, CallbackContext
 
-from travel_agent.models import User
 from travel_agent.repositories import (
     InviteTokenRepository,
     TravelRepository,
     UserRepository,
 )
+
+if TYPE_CHECKING:
+    from travel_agent.models import User
 
 
 class Context(CallbackContext):

@@ -35,6 +35,7 @@ class ChangeBioState(enum.Enum):
 
 def create_handlers() -> list[BaseHandler]:
     return [
+        CommandHandler("travels", travels),
         ConversationHandler(
             entry_points=[CommandHandler("newtravel", newtravel_entry)],
             states={
@@ -48,6 +49,18 @@ def create_handlers() -> list[BaseHandler]:
             fallbacks=[],
         ),
     ]
+
+
+@middlewares
+@message
+async def travels(message: Message, context: Context) -> None:
+    user = await context.user_repo.get(message.from_user.id)
+    buttons = [
+        InlineKeyboardButton(f"«{travel.name}» № {travel.id}", callback_data=travel.id)
+        for travel in user.travels
+    ]
+    markup = InlineKeyboardMarkup.from_column(buttons)
+    await message.reply_text("Список твоих путешествий:", reply_markup=markup)
 
 
 async def travel_menu(message: Message, context: Context, travel: Travel) -> None:
