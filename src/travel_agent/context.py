@@ -2,6 +2,7 @@ from typing import Any, Self
 
 from telegram.ext import Application, CallbackContext
 
+from travel_agent.models import User
 from travel_agent.repositories import (
     InviteTokenRepository,
     TravelRepository,
@@ -19,9 +20,22 @@ class Context(CallbackContext):
         super().__init__(application=application, chat_id=chat_id, user_id=user_id)
         self.data: dict[Any, Any] = {}
 
+        self._user: User | None = None
+
         self._user_repo: UserRepository | None = None
         self._travel_repo: TravelRepository | None = None
         self._invite_token_repository: InviteTokenRepository | None = None
+
+    @property
+    def user(self: Self) -> User:
+        if self._user is None:
+            msg = "User is not authentificated"
+            raise ValueError(msg)
+        return self._user
+
+    @user.setter
+    def user(self: Self, value: User) -> None:
+        self._user = value
 
     @property
     def user_repo(self: Self) -> UserRepository:

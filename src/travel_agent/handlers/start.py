@@ -14,9 +14,9 @@ async def start(message: Message, context: Context) -> None:
         travel_id = await context.invite_token_repo.get_travel_id(invite_token)
         if isinstance(travel_id, int):
             await context.travel_repo.add_user_to(
-                travel_id=travel_id, user_id=context.data["user"].id
+                travel_id=travel_id, user_id=context.user.id
             )
-            travel = await context.travel_repo.get_one_or_none(id=travel_id)
+            travel = await context.travel_repo.get(id=travel_id)
             for user in travel.users:
                 await context.bot.send_message(
                     chat_id=user.id,

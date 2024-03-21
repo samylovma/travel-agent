@@ -21,13 +21,13 @@ from travel_agent.context import Context
 from travel_agent.handlers import travel
 from travel_agent.handlers.help import help
 from travel_agent.handlers.settings import (
-    back_to_settings_menu,
+    back_to_settings,
+    settings,
     settings_age,
     settings_age_answered,
-    settings_menu,
+    settings_sex,
     settings_sex_female,
     settings_sex_male,
-    settings_sex_menu,
 )
 from travel_agent.handlers.start import start
 
@@ -64,8 +64,8 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help))
 
-    application.add_handler(CommandHandler("settings", settings_menu))
-    application.add_handler(CallbackQueryHandler(settings_sex_menu, "^settings_sex$"))
+    application.add_handler(CommandHandler("settings", settings))
+    application.add_handler(CallbackQueryHandler(settings_sex, "^settings_sex$"))
     application.add_handler(
         CallbackQueryHandler(settings_sex_male, "^settings_sex_male$")
     )
@@ -73,7 +73,7 @@ def main() -> None:
         CallbackQueryHandler(settings_sex_female, "^settings_sex_female$")
     )
     application.add_handler(
-        CallbackQueryHandler(back_to_settings_menu, "^settings_sex_back$")
+        CallbackQueryHandler(back_to_settings, "^settings_sex_back$")
     )
 
     application.add_handler(

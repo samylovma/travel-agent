@@ -23,7 +23,7 @@ def middlewares(function: Callback) -> Callback:
         context.data["redis_client"] = redis_client
 
         user, _ = await context.user_repo.get_or_upsert(id=update.effective_user.id)
-        context.data["user"] = user
+        context.user = user
 
         result = await function(update, context)
 
