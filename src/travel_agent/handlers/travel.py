@@ -1,7 +1,12 @@
 import enum
 
 from sqlalchemy.exc import IntegrityError
-from telegram import CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup, Message
+from telegram import (
+    CallbackQuery,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    Message,
+)
 from telegram.ext import (
     BaseHandler,
     CallbackQueryHandler,
@@ -10,6 +15,7 @@ from telegram.ext import (
     MessageHandler,
     filters,
 )
+from telegram.helpers import create_deep_linked_url
 
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
@@ -44,6 +50,36 @@ def create_handlers() -> list[BaseHandler]:
     ]
 
 
+async def travel_menu(message: Message, context: Context, travel: Travel) -> None:
+    me = await context.bot.get_me()
+    invite_token: str = await context.invite_token_repo.create(travel.id)
+    await message.reply_text(
+        f"<b>Идентификатор:</b> {travel.id}.\n"
+        f"<b>Название:</b> «{travel.name}».\n"
+        f"<b>Описание:</b> «{travel.bio}».\n\n"
+        "Кнопка «Пригласить друга» предложит тебе отправить "
+        "ссылку-приглашение путникам, с которыми ты хочешь отправиться в путешествие. "
+        "Ссылка действует 24 часа с момента отправки этого сообщения.",
+        reply_markup=InlineKeyboardMarkup.from_column(
+            (
+                InlineKeyboardButton(
+                    "Изменить описание", callback_data=f"travel_bio_{travel.id}"
+                ),
+                InlineKeyboardButton(
+                    "Добавить локацию", callback_data="travel_add_loc"
+                ),
+                InlineKeyboardButton(
+                    "Пригласить друга",
+                    url=(
+                        "tg://msg_url?url="
+                        + create_deep_linked_url(me.username, invite_token)
+                    ),
+                ),
+            )
+        ),
+    )
+
+
 @middlewares
 @message
 async def newtravel_entry(message: Message, _: Context) -> NewTravelState:
@@ -64,23 +100,10 @@ async def newtravel_name(message: Message, context: Context) -> NewTravelState:
             "К сожалению, это название уже занято. Попробуйте другое."
         )
         return NewTravelState.NAME
-
-    await message.reply_text(
-        f"<b>Идентификатор:</b> {travel.id}.\n"
-        f"<b>Название:</b> «{travel.name}».\n"
-        f"<b>Описание:</b> «{travel.bio}».",
-        reply_markup=InlineKeyboardMarkup.from_column(
-            (
-                InlineKeyboardButton(
-                    "Изменить описание", callback_data=f"travel_bio_{travel.id}"
-                ),
-                InlineKeyboardButton(
-                    "Добавить локацию", callback_data="travel_add_loc"
-                ),
-            )
-        ),
+    await context.travel_repo.add_user_to(
+        travel_id=travel.id, user_id=context.bot_data["user"].id
     )
-
+    await travel_menu(message, context, travel)
     return NewTravelState.END
 
 
@@ -103,20 +126,5 @@ async def change_bio_end(message: Message, context: Context) -> ChangeBioState:
         Travel(id=travel_id, bio=message.text), attribute_names=("bio",)
     )
     travel = await context.travel_repo.get(travel_id)
-
-    await message.reply_text(
-        f"<b>Идентификатор:</b> {travel.id}.\n"
-        f"<b>Название:</b> «{travel.name}».\n"
-        f"<b>Описание:</b> «{travel.bio}».",
-        reply_markup=InlineKeyboardMarkup.from_column(
-            (
-                InlineKeyboardButton(
-                    "Изменить описание", callback_data=f"travel_bio_{travel.id}"
-                ),
-                InlineKeyboardButton(
-                    "Добавить локацию", callback_data="travel_add_loc"
-                ),
-            )
-        ),
-    )
+    await travel_menu(message, context, travel)
     return ChangeBioState.END

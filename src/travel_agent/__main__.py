@@ -3,6 +3,7 @@ import os
 import typing
 
 from advanced_alchemy.base import orm_registry
+from redis.asyncio import ConnectionPool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 from telegram.constants import ParseMode
 from telegram.ext import (
@@ -42,7 +43,6 @@ async def post_init(application: Application) -> None:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    logging.getLogger("telegram").setLevel(logging.DEBUG)
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
     application = (
@@ -58,6 +58,8 @@ def main() -> None:
     application.bot_data["db_session_factory"] = async_sessionmaker(
         application.bot_data["db_engine"]
     )
+
+    application.bot_data["redis_pool"] = ConnectionPool.from_url(os.getenv("REDIS_URL"))
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help))

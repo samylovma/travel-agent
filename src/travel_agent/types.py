@@ -10,4 +10,6 @@ ST = TypeVar("ST")
 RT = TypeVar("RT")
 Callback: TypeAlias = Callable[[Update, Context], Coroutine[YT, ST, RT]]
 MessageCallback: TypeAlias = Callable[[Message, Context], Coroutine[YT, ST, RT]]
-CallbackQueryCallback: TypeAlias = Callable[[CallbackQuery, Context], Coroutine[YT, ST, RT]]
+CallbackQueryCallback: TypeAlias = Callable[
+    [CallbackQuery, Context], Coroutine[YT, ST, RT]
+]

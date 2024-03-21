@@ -87,6 +87,8 @@ class Travel(Base):
     name: Mapped[str] = mapped_column(unique=True)
     bio: Mapped[str | None]
 
-    users: Mapped[set[User]] = relationship(secondary=user_to_travel_table)
+    users: Mapped[set[User]] = relationship(
+        secondary=user_to_travel_table, lazy="selectin"
+    )
     locations: Mapped[set[Location]] = relationship()
     notes: Mapped[set[Note]] = relationship()
