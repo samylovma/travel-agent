@@ -100,8 +100,15 @@ async def newtravel_name(message: Message, context: Context) -> NewTravelState:
             "К сожалению, это название уже занято. Попробуйте другое."
         )
         return NewTravelState.NAME
-    await context.travel_repo.add_user_to(travel_id=travel.id, user_id=context.user.id)
+
+    travel_id = travel.id
+
+    user = await context.user_repo.get(message.from_user.id)
+    await context.travel_repo.add_user_to(travel_id=travel.id, user_id=user.id)
+
+    travel = await context.travel_repo.get(travel_id)
     await travel_menu(message, context, travel)
+
     return NewTravelState.END
 
 

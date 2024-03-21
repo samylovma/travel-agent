@@ -5,6 +5,7 @@ from redis.asyncio import Redis
 from telegram import Update
 
 from travel_agent.context import Context
+from travel_agent.models import User
 from travel_agent.types import Callback
 
 if typing.TYPE_CHECKING:
@@ -22,8 +23,9 @@ def middlewares(function: Callback) -> Callback:
         redis_client = Redis.from_pool(redis_pool)
         context.data["redis_client"] = redis_client
 
-        user, _ = await context.user_repo.get_or_upsert(id=update.effective_user.id)
-        context.user = user
+        user = await context.user_repo.get_one_or_none(id=update.effective_user.id)
+        if user is None:
+            await context.user_repo.add(User(id=update.effective_user.id))
 
         result = await function(update, context)
 

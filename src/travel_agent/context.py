@@ -27,17 +27,6 @@ class Context(CallbackContext):
         self._invite_token_repository: InviteTokenRepository | None = None
 
     @property
-    def user(self: Self) -> User:
-        if self._user is None:
-            msg = "User is not authentificated"
-            raise ValueError(msg)
-        return self._user
-
-    @user.setter
-    def user(self: Self, value: User) -> None:
-        self._user = value
-
-    @property
     def user_repo(self: Self) -> UserRepository:
         if self._user_repo is None:
             self._user_repo = UserRepository(

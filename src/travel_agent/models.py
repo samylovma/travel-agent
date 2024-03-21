@@ -55,6 +55,9 @@ class User(Base):
     city: Mapped[str | None]
     bio: Mapped[str | None]
 
+    travels: Mapped[set["Travel"]] = relationship(
+        secondary=user_to_travel_table, lazy="selectin"
+    )
     interests: Mapped[set[Interest]] = relationship(secondary=user_to_interest_table)
 
 

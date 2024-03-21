@@ -13,8 +13,9 @@ async def start(message: Message, context: Context) -> None:
         invite_token: str = context.args[0]
         travel_id = await context.invite_token_repo.get_travel_id(invite_token)
         if isinstance(travel_id, int):
+            user = await context.user_repo.get(message.from_user.id)
             await context.travel_repo.add_user_to(
-                travel_id=travel_id, user_id=context.user.id
+                travel_id=travel_id, user_id=user.id
             )
             travel = await context.travel_repo.get(id=travel_id)
             for user in travel.users:

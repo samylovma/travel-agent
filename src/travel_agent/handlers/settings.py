@@ -74,8 +74,9 @@ async def settings_age_answered(message: Message, context: Context) -> int:
         age = int(message.text)
     except ValueError:
         await message.reply_text("Неверный формат")
-    context.user.age = age
-    await context.user_repo.update(context.user)
+    user = await context.user_repo.get(message.from_user.id)
+    user.age = age
+    await context.user_repo.update(user)
     await message.reply_text("Отлично!")
     await settings_menu(message, context)
     return -1
@@ -99,14 +100,16 @@ async def settings_sex(callback_query: CallbackQuery, _: Context) -> None:
 @middlewares
 @callback_query
 async def settings_sex_male(callback_query: CallbackQuery, context: Context) -> None:
-    context.user.sex = SexEnum.male
-    await context.user_repo.update(context.user)
+    user = await context.user_repo.get(message.from_user.id)
+    user.sex = SexEnum.male
+    await context.user_repo.update(user)
     await back_to_settings_menu(callback_query.message, context)
 
 
 @middlewares
 @callback_query
 async def settings_sex_female(callback_query: CallbackQuery, context: Context) -> None:
-    context.user.sex = SexEnum.female
-    await context.user_repo.update(context.user)
+    user = await context.user_repo.get(message.from_user.id)
+    user.sex = SexEnum.female
+    await context.user_repo.update(user)
     await back_to_settings_menu(callback_query.message, context)
