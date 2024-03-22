@@ -90,4 +90,4 @@ class Travel(Base):
         secondary=user_to_travel_table, back_populates="travels", lazy="selectin"
     )
     locations: Mapped[set[Location]] = relationship()
-    notes: Mapped[set[Note]] = relationship()
+    notes: Mapped[set[Note]] = relationship(lazy="selectin")

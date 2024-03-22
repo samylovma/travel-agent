@@ -62,6 +62,9 @@ def create_handlers() -> list[BaseHandler]:
             },
             fallbacks=[],
         ),
+        CallbackQueryHandler(
+            note_list, lambda data: check_callback_data(data, "travel_note_list")
+        ),
     ]
 
 
@@ -78,6 +81,9 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
             (
                 InlineKeyboardButton(
                     "Изменить описание", callback_data=("travel_bio", travel.id)
+                ),
+                InlineKeyboardButton(
+                    "Список заметок", callback_data=("travel_note_list", travel.id)
                 ),
                 InlineKeyboardButton(
                     "Пригласить друга",
@@ -146,6 +152,9 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
                     "Изменить описание", callback_data=("travel_bio", travel.id)
                 ),
                 InlineKeyboardButton(
+                    "Список заметок", callback_data=("travel_note_list", travel.id)
+                ),
+                InlineKeyboardButton(
                     "Пригласить друга",
                     url=(
                         "tg://msg_url?url="
@@ -209,3 +218,25 @@ async def change_bio_end(message: Message, context: Context) -> int:
     travel = await context.travel_repo.get(travel_id)
     await travel_menu(message, context, travel)
     return ChangeBioState.END.value
+
+
+@middlewares
+@callback_query
+async def note_list(callback_query: CallbackQuery, context: Context) -> None:
+    travel_id: int = callback_query.data[1]
+    travel = await context.travel_repo.get(travel_id)
+    await callback_query.message.edit_text(
+        f"Доступные заметки путешествия «{travel.name}»:"
+    )
+    await callback_query.message.edit_reply_markup(
+        InlineKeyboardMarkup.from_column(
+            [
+                InlineKeyboardButton(note.id, callback_data=("note", note.id))
+                for note in travel.notes
+                if (
+                    note.is_private is False
+                    or note.user_id == callback_query.from_user.id
+                )
+            ]
+        )
+    )
