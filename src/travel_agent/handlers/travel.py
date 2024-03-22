@@ -231,7 +231,7 @@ async def note_list(callback_query: CallbackQuery, context: Context) -> None:
     await callback_query.message.edit_reply_markup(
         InlineKeyboardMarkup.from_column(
             [
-                InlineKeyboardButton(note.id, callback_data=("note", note.id))
+                InlineKeyboardButton(f"«{note.name}»", callback_data=("note", note.id))
                 for note in travel.notes
                 if (
                     note.is_private is False
