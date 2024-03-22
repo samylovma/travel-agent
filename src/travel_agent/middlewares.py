@@ -23,14 +23,16 @@ def middlewares(function: Callback) -> Callback:
         redis_client = Redis.from_pool(redis_pool)
         context.data["redis_client"] = redis_client
 
-        user = await context.user_repo.get_one_or_none(id=update.effective_user.id)
-        if user is None:
-            await context.user_repo.add(User(id=update.effective_user.id))
+        try:
+            user = await context.user_repo.get_one_or_none(id=update.effective_user.id)
+            if user is None:
+                await context.user_repo.add(User(id=update.effective_user.id))
 
-        result = await function(update, context)
+            result = await function(update, context)
 
-        await db_session.close()
-        await redis_client.aclose()
+        finally:
+            await db_session.close()
+            await redis_client.aclose()
 
         return result
 

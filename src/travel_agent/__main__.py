@@ -51,6 +51,7 @@ def main() -> None:
         .post_init(post_init)
         .context_types(ContextTypes(Context))
         .defaults(Defaults(parse_mode=ParseMode.HTML))
+        .arbitrary_callback_data(arbitrary_callback_data=True)
         .build()
     )
 

@@ -44,42 +44,30 @@ def create_handlers() -> list[BaseHandler]:
             fallbacks=[],
         ),
         ConversationHandler(
-            entry_points=[CallbackQueryHandler(change_bio_entry, "travel_bio")],
+            entry_points=[
+                CallbackQueryHandler(
+                    change_bio_entry, lambda data: data[0] == "travel_bio"
+                )
+            ],
             states={ChangeBioState.BIO: [MessageHandler(filters.TEXT, change_bio_end)]},
             fallbacks=[],
         ),
     ]
 
 
-@middlewares
-@message
-async def travels(message: Message, context: Context) -> None:
-    user = await context.user_repo.get(message.from_user.id)
-    buttons = [
-        InlineKeyboardButton(f"«{travel.name}» № {travel.id}", callback_data=travel.id)
-        for travel in user.travels
-    ]
-    markup = InlineKeyboardMarkup.from_column(buttons)
-    await message.reply_text("Список твоих путешествий:", reply_markup=markup)
-
-
 async def travel_menu(message: Message, context: Context, travel: Travel) -> None:
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
     await message.reply_text(
-        f"<b>Идентификатор:</b> {travel.id}.\n"
-        f"<b>Название:</b> «{travel.name}».\n"
+        f"<b>Путешествие «{travel.name}» № {travel.id}</b>\n"
         f"<b>Описание:</b> «{travel.bio}».\n\n"
         "Кнопка «Пригласить друга» предложит тебе отправить "
         "ссылку-приглашение путникам, с которыми ты хочешь отправиться в путешествие. "
-        "Ссылка действует 24 часа с момента отправки этого сообщения.",
+        "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
         reply_markup=InlineKeyboardMarkup.from_column(
             (
                 InlineKeyboardButton(
-                    "Изменить описание", callback_data=f"travel_bio_{travel.id}"
-                ),
-                InlineKeyboardButton(
-                    "Добавить локацию", callback_data="travel_add_loc"
+                    "Изменить описание", callback_data=("travel_bio", travel.id)
                 ),
                 InlineKeyboardButton(
                     "Пригласить друга",
@@ -91,6 +79,26 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
             )
         ),
     )
+
+
+@middlewares
+@message
+async def travels(message: Message, context: Context) -> None:
+    user = await context.user_repo.get(message.from_user.id)
+    buttons = [
+        InlineKeyboardButton(
+            f"«{travel.name}» № {travel.id}", callback_data=("travel", travel.id)
+        )
+        for travel in user.travels
+    ]
+    markup = InlineKeyboardMarkup.from_column(buttons)
+    await message.reply_text("Список твоих путешествий:", reply_markup=markup)
+
+
+@middlewares
+@callback_query
+async def travel(callback_query: CallbackQuery, context: Context) -> None:
+    pass
 
 
 @middlewares
@@ -130,7 +138,7 @@ async def newtravel_name(message: Message, context: Context) -> NewTravelState:
 async def change_bio_entry(
     callback_query: CallbackQuery, context: Context
 ) -> ChangeBioState:
-    context.user_data["travel_id"] = int(callback_query.data.split("_")[-1])
+    context.user_data["travel_id"] = callback_query.data[1]
     await callback_query.answer()
     await callback_query.message.reply_text("Напишите описание для путешествия.")
     return ChangeBioState.BIO

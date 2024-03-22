@@ -8,7 +8,7 @@ authors = [
     {name = "Mikhail Samylov", email = "Samylov-Mikhail@yandex.com"},
 ]
 dependencies = [
-    "python-telegram-bot>=21.0.1",
+    "python-telegram-bot[callback-data]>=21.0.1",
     "advanced-alchemy>=0.7.4",
     "asyncpg>=0.29.0",
     "redis[hiredis]>=5.0.3",
