@@ -28,7 +28,8 @@ async def start(message: telegram.Message, context: Context) -> None:
                 chat_id=user.id,
                 text=(
                     f"Добавлен Путник в путешествие «{travel.name}»: "
-                    + get_mention(message.from_user) + "."
+                    + get_mention(message.from_user)
+                    + "."
                 ),
             )
         return

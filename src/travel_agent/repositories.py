@@ -6,7 +6,7 @@ from advanced_alchemy import SQLAlchemyAsyncRepository
 from redis.asyncio import Redis
 from sqlalchemy import insert
 
-from travel_agent.models import Travel, User, user_to_travel_table
+from travel_agent.models import Note, Travel, User, user_to_travel_table
 
 
 class UserRepository(SQLAlchemyAsyncRepository[User]):
@@ -20,6 +20,10 @@ class TravelRepository(SQLAlchemyAsyncRepository[Travel]):
         stmt = insert(user_to_travel_table).values(user_id=user_id, travel_id=travel_id)
         await self.session.execute(stmt)
         await self._flush_or_commit(auto_commit=None)
+
+
+class NoteRepository(SQLAlchemyAsyncRepository[Note]):
+    model_type = Note
 
 
 class InviteTokenRepository:

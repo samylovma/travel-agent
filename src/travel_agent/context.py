@@ -4,6 +4,7 @@ from telegram.ext import Application, CallbackContext
 
 from travel_agent.repositories import (
     InviteTokenRepository,
+    NoteRepository,
     TravelRepository,
     UserRepository,
 )
@@ -26,6 +27,7 @@ class Context(CallbackContext):
 
         self._user_repo: UserRepository | None = None
         self._travel_repo: TravelRepository | None = None
+        self._note_repo: NoteRepository | None = None
         self._invite_token_repository: InviteTokenRepository | None = None
 
     @property
@@ -43,6 +45,14 @@ class Context(CallbackContext):
                 session=self.data["db_session"], auto_commit=True
             )
         return self._travel_repo
+
+    @property
+    def note_repo(self: Self) -> NoteRepository:
+        if self._note_repo is None:
+            self._note_repo = NoteRepository(
+                session=self.data["db_session"], auto_commit=True
+            )
+        return self._note_repo
 
     @property
     def invite_token_repo(self: Self) -> InviteTokenRepository:

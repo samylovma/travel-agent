@@ -21,7 +21,7 @@ from telegram.helpers import create_deep_linked_url
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
 from travel_agent.models import Travel
-from travel_agent.utils import callback_query, message
+from travel_agent.utils import callback_query, check_callback_data, message
 
 
 class NewTravelState(enum.Enum):
@@ -32,20 +32,6 @@ class NewTravelState(enum.Enum):
 class ChangeBioState(enum.Enum):
     BIO = 0
     END = ConversationHandler.END
-
-
-def check_callback_data(data: object, action: str) -> bool:
-    if isinstance(data, tuple):
-        try:
-            data_action = data[0]
-        except IndexError:
-            return False
-    elif isinstance(data, str):
-        data_action = data
-    else:
-        return False
-
-    return data_action == action
 
 
 def create_handlers() -> list[BaseHandler]:

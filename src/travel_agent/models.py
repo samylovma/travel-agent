@@ -8,7 +8,6 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
-    LargeBinary,
     Table,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -74,12 +73,9 @@ class Location(Base):
 
 
 class Note(Base):
-    id: Mapped[int] = mapped_column(
-        BigInteger(), primary_key=True, unique=True, autoincrement=True
-    )
+    id: Mapped[str] = mapped_column(primary_key=True, unique=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
     travel_id: Mapped[int] = mapped_column(ForeignKey("travel.id"))
-    content: Mapped[bytes] = mapped_column(LargeBinary())
     is_private: Mapped[bool] = mapped_column(default=True)
 
 

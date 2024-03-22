@@ -33,3 +33,17 @@ def get_mention(user: tg.User) -> str:
     if user.username is not None:
         return f"@{user.username}"
     return mention_html(user_id=user.id, name=user.name)
+
+
+def check_callback_data(data: object, action: str) -> bool:
+    if isinstance(data, tuple):
+        try:
+            data_action = data[0]
+        except IndexError:
+            return False
+    elif isinstance(data, str):
+        data_action = data
+    else:
+        return False
+
+    return data_action == action
