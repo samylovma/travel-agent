@@ -58,7 +58,9 @@ def create_handlers() -> list[BaseHandler]:
         ConversationHandler(
             entry_points=[CommandHandler("newtravel", newtravel_entry)],
             states={
-                NewTravelState.NAME.value: [MessageHandler(filters.TEXT, newtravel_name)]
+                NewTravelState.NAME.value: [
+                    MessageHandler(filters.TEXT, newtravel_name)
+                ]
             },
             fallbacks=[],
         ),
@@ -69,7 +71,9 @@ def create_handlers() -> list[BaseHandler]:
                     lambda data: check_callback_data(data, "travel_bio"),
                 )
             ],
-            states={ChangeBioState.BIO.value: [MessageHandler(filters.TEXT, change_bio_end)]},
+            states={
+                ChangeBioState.BIO.value: [MessageHandler(filters.TEXT, change_bio_end)]
+            },
             fallbacks=[],
         ),
     ]
@@ -204,9 +208,7 @@ async def newtravel_name(message: Message, context: Context) -> int:
 
 @middlewares
 @callback_query
-async def change_bio_entry(
-    callback_query: CallbackQuery, context: Context
-) -> int:
+async def change_bio_entry(callback_query: CallbackQuery, context: Context) -> int:
     context.user_data["travel_id"] = typing.cast(int, callback_query.data[1])
     await callback_query.answer()
     await callback_query.message.reply_text("Напишите описание для путешествия.")
