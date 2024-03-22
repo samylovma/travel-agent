@@ -83,7 +83,7 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
     await message.reply_text(
-        f"<b>Путешествие «{travel.name}» № {travel.id}</b>\n"
+        f"<b>Путешествие «{travel.name}»</b>\n"
         f"<b>Описание:</b> «{travel.bio}».\n\n"
         "Кнопка «Пригласить друга» предложит тебе отправить "
         "ссылку-приглашение путникам, с которыми ты хочешь отправиться в путешествие. "
@@ -114,8 +114,7 @@ async def travels_cmd(message: Message, context: Context) -> None:
         reply_markup=InlineKeyboardMarkup.from_column(
             [
                 InlineKeyboardButton(
-                    f"«{travel.name}» № {travel.id}",
-                    callback_data=("travel", travel.id),
+                    f"«{travel.name}»", callback_data=("travel", travel.id)
                 )
                 for travel in user.travels
             ]
@@ -132,8 +131,7 @@ async def travels_button(callback_query: CallbackQuery, context: Context) -> Non
         InlineKeyboardMarkup.from_column(
             [
                 InlineKeyboardButton(
-                    f"«{travel.name}» № {travel.id}",
-                    callback_data=("travel", travel.id),
+                    f"«{travel.name}»", callback_data=("travel", travel.id)
                 )
                 for travel in user.travels
             ]
@@ -149,7 +147,7 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
     await callback_query.message.edit_text(
-        f"<b>Путешествие «{travel.name}» № {travel.id}</b>\n"
+        f"<b>Путешествие «{travel.name}»</b>\n"
         f"<b>Описание:</b> «{travel.bio}».\n\n"
         "Кнопка «Пригласить друга» предложит тебе отправить "
         "ссылку-приглашение путникам, с которыми ты хочешь отправиться в путешествие. "
