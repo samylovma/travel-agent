@@ -24,6 +24,9 @@ ignore = [
     "UP040",
 ]
 
+[tool.mypy]
+strict = true
+
 [tool.pdm.dev-dependencies]
 lint = [
     "ruff>=0.3.3",

@@ -43,6 +43,7 @@ async def post_init(application: Application) -> None:
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
+    logging.getLogger("telegram").setLevel(logging.DEBUG)
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
     application = (

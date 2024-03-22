@@ -34,7 +34,7 @@ class InviteTokenRepository:
         return invite_token
 
     async def get_travel_id(self: typing.Self, invite_token: str) -> int | None:
-        result = await self.client.get(name=invite_token)
+        result: int | None = await self.client.get(name=invite_token)
         if result is not None:
             result = int(result)
         return result

@@ -100,7 +100,7 @@ async def settings_sex(callback_query: CallbackQuery, _: Context) -> None:
 @middlewares
 @callback_query
 async def settings_sex_male(callback_query: CallbackQuery, context: Context) -> None:
-    user = await context.user_repo.get(message.from_user.id)
+    user = await context.user_repo.get(callback_query.from_user.id)
     user.sex = SexEnum.male
     await context.user_repo.update(user)
     await back_to_settings_menu(callback_query.message, context)
@@ -109,7 +109,7 @@ async def settings_sex_male(callback_query: CallbackQuery, context: Context) -> 
 @middlewares
 @callback_query
 async def settings_sex_female(callback_query: CallbackQuery, context: Context) -> None:
-    user = await context.user_repo.get(message.from_user.id)
+    user = await context.user_repo.get(callback_query.from_user.id)
     user.sex = SexEnum.female
     await context.user_repo.update(user)
     await back_to_settings_menu(callback_query.message, context)
