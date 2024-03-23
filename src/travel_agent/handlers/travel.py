@@ -8,6 +8,7 @@ from telegram import (
     InlineKeyboardMarkup,
     Message,
 )
+from telegram.error import BadRequest
 from telegram.ext import (
     BaseHandler,
     CallbackQueryHandler,
@@ -65,6 +66,9 @@ def create_handlers() -> list[BaseHandler]:
         CallbackQueryHandler(
             note_list, lambda data: check_callback_data(data, "travel_note_list")
         ),
+        CallbackQueryHandler(
+            show_note, lambda data: check_callback_data(data, "travel_note"),
+        )
     ]
 
 
@@ -231,7 +235,7 @@ async def note_list(callback_query: CallbackQuery, context: Context) -> None:
     await callback_query.message.edit_reply_markup(
         InlineKeyboardMarkup.from_column(
             [
-                InlineKeyboardButton(f"«{note.name}»", callback_data=("note", note.id))
+                InlineKeyboardButton(f"«{note.name}»", callback_data=("travel_note", note.id))
                 for note in travel.notes
                 if (
                     note.is_private is False
@@ -240,3 +244,15 @@ async def note_list(callback_query: CallbackQuery, context: Context) -> None:
             ]
         )
     )
+
+
+@middlewares
+@callback_query
+async def show_note(callback_query: CallbackQuery, context: Context) -> None:
+    note_id: int = callback_query.data[1]
+    note = await context.note_repo.get(note_id)
+    await callback_query.answer()
+    try:
+        await callback_query.message.reply_photo(note.id)
+    except BadRequest:
+        await callback_query.message.reply_document(note.id)
