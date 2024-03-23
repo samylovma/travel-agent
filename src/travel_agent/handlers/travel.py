@@ -67,8 +67,8 @@ def create_handlers() -> list[BaseHandler]:
             note_list, lambda data: check_callback_data(data, "travel_note_list")
         ),
         CallbackQueryHandler(
-            show_note, lambda data: check_callback_data(data, "travel_note"),
-        )
+            show_note, lambda data: check_callback_data(data, "travel_note")
+        ),
     ]
 
 
@@ -235,7 +235,9 @@ async def note_list(callback_query: CallbackQuery, context: Context) -> None:
     await callback_query.message.edit_reply_markup(
         InlineKeyboardMarkup.from_column(
             [
-                InlineKeyboardButton(f"«{note.name}»", callback_data=("travel_note", note.id))
+                InlineKeyboardButton(
+                    f"«{note.name}»", callback_data=("travel_note", note.id)
+                )
                 for note in travel.notes
                 if (
                     note.is_private is False
