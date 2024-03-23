@@ -1,12 +1,14 @@
 import secrets
 import typing
+from dataclasses import dataclass
 from datetime import timedelta
 
+import httpx
 from advanced_alchemy import SQLAlchemyAsyncRepository
 from redis.asyncio import Redis
 from sqlalchemy import insert
 
-from travel_agent.models import Note, Travel, User, user_to_travel_table
+from travel_agent.models import Location, Note, Travel, User, user_to_travel_table
 
 
 class UserRepository(SQLAlchemyAsyncRepository[User]):
@@ -26,6 +28,10 @@ class NoteRepository(SQLAlchemyAsyncRepository[Note]):
     model_type = Note
 
 
+class LocationRepository(SQLAlchemyAsyncRepository[Location]):
+    model_type = Location
+
+
 class InviteTokenRepository:
     def __init__(self: typing.Self, client: Redis) -> None:
         self.client = client
@@ -42,3 +48,35 @@ class InviteTokenRepository:
         if result is not None:
             result = int(result)
         return result
+
+
+@dataclass
+class Place:
+    lat: float
+    lon: float
+    name: str
+    address: str
+
+
+class MapSearchRepository:
+    def __init__(self: typing.Self, client: httpx.AsyncClient) -> None:
+        self.client = client
+
+    async def search(self: typing.Self, query: str) -> list[Place]:
+        response = await self.client.get(
+            "https://nominatim.openstreetmap.org/search",
+            params={"format": "jsonv2", "q": query},
+            headers={"Accept-Language": "ru"},
+        )
+        if not response.is_success:
+            raise
+        data = response.json()
+        return [
+            Place(
+                lat=float(place["lat"]),
+                lon=float(place["lon"]),
+                name=place["name"],
+                address=place["display_name"],
+            )
+            for place in data
+        ]

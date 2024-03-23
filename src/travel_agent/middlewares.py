@@ -1,6 +1,7 @@
 import functools
 import typing
 
+import httpx
 from redis.asyncio import Redis
 from telegram import Update
 
@@ -23,6 +24,9 @@ def middlewares(function: Callback) -> Callback:
         redis_client = Redis.from_pool(redis_pool)
         context.data["redis_client"] = redis_client
 
+        httpx_client = httpx.AsyncClient()
+        context.data["httpx_client"] = httpx_client
+
         try:
             user = await context.user_repo.get_one_or_none(id=update.effective_user.id)
             if user is None:
@@ -33,6 +37,7 @@ def middlewares(function: Callback) -> Callback:
         finally:
             await db_session.close()
             await redis_client.aclose()
+            await httpx_client.aclose()
 
         return result
 
