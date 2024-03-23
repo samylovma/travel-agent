@@ -69,6 +69,9 @@ def create_handlers() -> list[BaseHandler]:
         CallbackQueryHandler(
             show_note, lambda data: check_callback_data(data, "travel_note")
         ),
+        CallbackQueryHandler(
+            locations, lambda data: check_callback_data(data, "travel_location_list")
+        ),
     ]
 
 
@@ -88,6 +91,9 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
                 ),
                 InlineKeyboardButton(
                     "Список заметок", callback_data=("travel_note_list", travel.id)
+                ),
+                InlineKeyboardButton(
+                    "Список локаций", callback_data=("travel_location_list", travel.id)
                 ),
                 InlineKeyboardButton(
                     "Пригласить друга",
@@ -157,6 +163,9 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
                 ),
                 InlineKeyboardButton(
                     "Список заметок", callback_data=("travel_note_list", travel.id)
+                ),
+                InlineKeyboardButton(
+                    "Список локаций", callback_data=("travel_location_list", travel.id)
                 ),
                 InlineKeyboardButton(
                     "Пригласить друга",
@@ -258,3 +267,25 @@ async def show_note(callback_query: CallbackQuery, context: Context) -> None:
         await callback_query.message.reply_photo(note.id)
     except BadRequest:
         await callback_query.message.reply_document(note.id)
+
+
+@middlewares
+@callback_query
+async def locations(callback_query: CallbackQuery, context: Context) -> None:
+    travel_id: int = callback_query.data[1]
+    travel = await context.travel_repo.get(travel_id)
+    await callback_query.message.edit_text(
+        f"<b>Список локаций путешествия «{travel.name}»</b>\n\n"
+        + "\n".join(
+            f"«{location.name}»: с {location.start_at} по {location.end_at}."
+            for location in travel.locations
+        )
+    )
+    await callback_query.message.edit_reply_markup(
+        InlineKeyboardMarkup.from_column(
+            (
+                InlineKeyboardButton("Добавить локацию", callback_data="add_location"),
+                InlineKeyboardButton("<< Назад", callback_data=("travel", travel.id)),
+            )
+        ),
+    )
