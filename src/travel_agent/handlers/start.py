@@ -21,7 +21,7 @@ async def start(message: telegram.Message, context: Context) -> None:
         for user in travel.users:
             if user.id == message.from_user.id:
                 await message.reply_text(
-                    "Тебя пригласили в путешествие «{travel.name}»!"
+                    f"Тебя пригласили в путешествие «{travel.name}»!"
                 )
                 continue
             await context.bot.send_message(
