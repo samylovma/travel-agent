@@ -59,7 +59,9 @@ async def locations(callback_query: CallbackQuery, context: Context) -> None:
     await callback_query.message.edit_text(
         f"<b>Локации путешествия «{travel.name}»</b>\n\n"
         + "\n".join(
-            f"«{location.name}»: с {location.start_at} по {location.end_at}."
+            f"<b>«{location.name}»:</b> "
+            f"с {location.start_at.strftime('%d.%m.%Y')} "
+            f"по {location.end_at.strftime('%d.%m.%Y')}."
             for location in travel.locations
         )
     )
@@ -159,7 +161,9 @@ async def add_location_end(message: Message, context: Context) -> int:
     await message.reply_text(
         f"<b>Локации путешествия «{travel.name}»</b>\n\n"
         + "\n".join(
-            f"«{location.name}»: с {location.start_at} по {location.end_at}."
+            f"<b>«{location.name}»:</b> "
+            f"с {location.start_at.strftime('%d.%m.%Y')} "
+            f"по {location.end_at.strftime('%d.%m.%Y')}."
             for location in travel.locations
         ),
         reply_markup=InlineKeyboardMarkup.from_column(

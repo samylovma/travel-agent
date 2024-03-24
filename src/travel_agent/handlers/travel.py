@@ -86,7 +86,7 @@ def build_keyboard(travel_id: int, bot_username: str, invite_token: str) -> None
                 callback_data=("travel_build_full_route", travel_id),
             ),
             InlineKeyboardButton(
-                "Пригласить друга",
+                "🔗 Пригласить",
                 url=(
                     "tg://msg_url?url="
                     + create_deep_linked_url(bot_username, invite_token)
@@ -100,10 +100,11 @@ def build_keyboard(travel_id: int, bot_username: str, invite_token: str) -> None
 async def travel_menu(message: Message, context: Context, travel: Travel) -> None:
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
+    bio = travel.bio if travel.bio is not None else ""
     await message.reply_text(
         f"<b>🧳 «{travel.name}»</b>\n\n"
-        f"<b>Описание:</b> «{travel.bio}».\n\n"
-        "Кнопка «Пригласить друга» предложит тебе "
+        f"<b>Описание:</b> «{bio}».\n\n"
+        "Кнопка «Пригласить» предложит тебе "
         "<b>отправить ссылку-приглашение путникам</b>, "
         "с которыми ты хочешь отправиться в путешествие. "
         "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
@@ -154,10 +155,11 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
     travel = await context.travel_repo.get(travel_id)
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
+    bio = travel.bio if travel.bio is not None else ""
     await callback_query.message.edit_text(
         f"<b>🧳 «{travel.name}»</b>\n\n"
-        f"<b>Описание:</b> «{travel.bio}».\n\n"
-        "Кнопка «Пригласить друга» предложит тебе "
+        f"<b>Описание:</b> «{bio}».\n\n"
+        "Кнопка «Пригласить» предложит тебе "
         "<b>отправить ссылку-приглашение путникам</b>, "
         "с которыми ты хочешь отправиться в путешествие. "
         "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
@@ -216,7 +218,8 @@ async def change_bio_entry(callback_query: CallbackQuery, context: Context) -> i
 async def change_bio_end(message: Message, context: Context) -> int:
     travel_id: int = context.user_data["travel_id"]
     await context.travel_repo.update(
-        Travel(id=travel_id, bio=message.text), attribute_names=("bio",)
+        Travel(id=travel_id, bio=message.text),
+        attribute_names=("bio",),
     )
     travel = await context.travel_repo.get(travel_id)
     await travel_menu(message, context, travel)
