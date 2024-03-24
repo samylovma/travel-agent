@@ -50,19 +50,24 @@ async def note_list(callback_query: CallbackQuery, context: Context) -> None:
     travel_id: int = callback_query.data[1]
     travel = await context.travel_repo.get(travel_id)
     await callback_query.message.edit_text(
-        f"<b>Заметки путешествия «{travel.name}»:</b>"
+        f"<b>Заметки путешествия «{travel.name}»</b>"
     )
     await callback_query.message.edit_reply_markup(
         InlineKeyboardMarkup.from_column(
             [
+                *[
+                    InlineKeyboardButton(
+                        f"«{note.name}»", callback_data=("travel_note", note.id)
+                    )
+                    for note in travel.notes
+                    if (
+                        note.is_private is False
+                        or note.user_id == callback_query.from_user.id
+                    )
+                ],
                 InlineKeyboardButton(
-                    f"«{note.name}»", callback_data=("travel_note", note.id)
-                )
-                for note in travel.notes
-                if (
-                    note.is_private is False
-                    or note.user_id == callback_query.from_user.id
-                )
+                    "<< К путешествию", callback_data=("travel", travel_id)
+                ),
             ]
         )
     )
@@ -75,9 +80,9 @@ async def show_note(callback_query: CallbackQuery, context: Context) -> None:
     note = await context.note_repo.get(note_id)
     await callback_query.answer()
     try:
-        await callback_query.message.reply_photo(note.id)
+        await callback_query.message.reply_photo(note.id, caption=note.name)
     except BadRequest:
-        await callback_query.message.reply_document(note.id)
+        await callback_query.message.reply_document(note.id, caption=note.name)
 
 
 @middlewares

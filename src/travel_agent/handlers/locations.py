@@ -157,7 +157,7 @@ async def add_location_end(message: Message, context: Context) -> int:
 
     travel = await context.travel_repo.get(travel_id)
     await message.reply_text(
-        f"<b>Список локаций путешествия «{travel.name}»</b>\n\n"
+        f"<b>Локации путешествия «{travel.name}»</b>\n\n"
         + "\n".join(
             f"«{location.name}»: с {location.start_at} по {location.end_at}."
             for location in travel.locations

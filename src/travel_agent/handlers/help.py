@@ -15,7 +15,7 @@ def create_handlers() -> list[BaseHandler]:
 async def help_callback(message: Message, _: Context) -> None:
     await message.reply_text(
         "<b>Мои команды</b>\n\n"
-        "/settings -- настройки профиля.\n"
-        "/travels -- меню путешествий.\n"
-        "/newtravel -- создать путешествие."
+        "/settings — настройки профиля.\n"
+        "/travels — меню путешествий.\n"
+        "/newtravel — создать путешествие."
     )
