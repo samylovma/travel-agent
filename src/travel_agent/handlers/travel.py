@@ -8,7 +8,6 @@ from telegram import (
     InlineKeyboardMarkup,
     Message,
 )
-from telegram.error import BadRequest
 from telegram.ext import (
     BaseHandler,
     CallbackQueryHandler,
@@ -66,12 +65,6 @@ def create_handlers() -> list[BaseHandler]:
                 ChangeBioState.BIO.value: [MessageHandler(filters.TEXT, change_bio_end)]
             },
             fallbacks=[],
-        ),
-        CallbackQueryHandler(
-            note_list, lambda data: check_callback_data(data, "travel_note_list")
-        ),
-        CallbackQueryHandler(
-            show_note, lambda data: check_callback_data(data, "travel_note")
         ),
     ]
 
@@ -232,39 +225,3 @@ async def change_bio_end(message: Message, context: Context) -> int:
     travel = await context.travel_repo.get(travel_id)
     await travel_menu(message, context, travel)
     return ChangeBioState.END.value
-
-
-@middlewares
-@callback_query_callback
-async def note_list(callback_query: CallbackQuery, context: Context) -> None:
-    travel_id: int = callback_query.data[1]
-    travel = await context.travel_repo.get(travel_id)
-    await callback_query.message.edit_text(
-        f"Доступные заметки путешествия «{travel.name}»:"
-    )
-    await callback_query.message.edit_reply_markup(
-        InlineKeyboardMarkup.from_column(
-            [
-                InlineKeyboardButton(
-                    f"«{note.name}»", callback_data=("travel_note", note.id)
-                )
-                for note in travel.notes
-                if (
-                    note.is_private is False
-                    or note.user_id == callback_query.from_user.id
-                )
-            ]
-        )
-    )
-
-
-@middlewares
-@callback_query_callback
-async def show_note(callback_query: CallbackQuery, context: Context) -> None:
-    note_id: int = callback_query.data[1]
-    note = await context.note_repo.get(note_id)
-    await callback_query.answer()
-    try:
-        await callback_query.message.reply_photo(note.id)
-    except BadRequest:
-        await callback_query.message.reply_document(note.id)
