@@ -28,12 +28,13 @@ async def build_route_of_travel(
     travel_id = cast(int, callback_query.data[1])
     travel = await context.travel_repo.get(travel_id)
     await callback_query.answer()
-    await context.bot.send_chat_action(
-        chat_id=callback_query.message.chat.id, action=ChatAction.UPLOAD_PHOTO
-    )
 
     route = await context.route_repo.create_car_route(
         *[(location.lon, location.lat) for location in travel.locations]
+    )
+
+    await context.bot.send_chat_action(
+        chat_id=callback_query.message.chat.id, action=ChatAction.UPLOAD_PHOTO
     )
 
     # TODO: staticmap uses thread pool and requests.

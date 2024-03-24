@@ -57,7 +57,7 @@ async def locations(callback_query: CallbackQuery, context: Context) -> None:
     travel_id: int = callback_query.data[1]
     travel = await context.travel_repo.get(travel_id)
     await callback_query.message.edit_text(
-        f"<b>Список локаций путешествия «{travel.name}»</b>\n\n"
+        f"<b>Локации путешествия «{travel.name}»</b>\n\n"
         + "\n".join(
             f"«{location.name}»: с {location.start_at} по {location.end_at}."
             for location in travel.locations

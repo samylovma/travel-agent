@@ -53,8 +53,10 @@ class User(Base):
     city: Mapped[str | None]
     bio: Mapped[str | None]
 
-    travels: Mapped[set["Travel"]] = relationship(
-        secondary=user_to_travel_table, back_populates="users", lazy="selectin"
+    travels: Mapped[list["Travel"]] = relationship(
+        secondary=user_to_travel_table,
+        lazy="selectin",
+        order_by="asc(Travel.id)",
     )
     interests: Mapped[set[Interest]] = relationship(secondary=user_to_interest_table)
 
@@ -86,8 +88,7 @@ class Travel(Base):
     name: Mapped[str] = mapped_column(unique=True)
     bio: Mapped[str | None]
 
-    users: Mapped[set[User]] = relationship(
-        secondary=user_to_travel_table, back_populates="travels", lazy="selectin"
+    locations: Mapped[list[Location]] = relationship(
+        lazy="selectin", order_by="asc(Location.start_at)"
     )
-    locations: Mapped[set[Location]] = relationship(lazy="selectin")
-    notes: Mapped[set[Note]] = relationship(lazy="selectin")
+    notes: Mapped[list[Note]] = relationship(lazy="selectin")

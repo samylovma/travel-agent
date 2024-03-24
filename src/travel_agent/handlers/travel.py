@@ -69,38 +69,46 @@ def create_handlers() -> list[BaseHandler]:
     ]
 
 
+def build_keyboard(travel_id: int, bot_username: str, invite_token: str) -> None:
+    return InlineKeyboardMarkup.from_column(
+        (
+            InlineKeyboardButton(
+                "📝 Изменить описание", callback_data=("travel_bio", travel_id)
+            ),
+            InlineKeyboardButton(
+                "🗒️ Заметки", callback_data=("travel_note_list", travel_id)
+            ),
+            InlineKeyboardButton(
+                "📍 Локации", callback_data=("travel_location_list", travel_id)
+            ),
+            InlineKeyboardButton(
+                "🗺️ Маршрут",
+                callback_data=("travel_build_full_route", travel_id),
+            ),
+            InlineKeyboardButton(
+                "Пригласить друга",
+                url=(
+                    "tg://msg_url?url="
+                    + create_deep_linked_url(bot_username, invite_token)
+                ),
+            ),
+            InlineKeyboardButton("<< Все путешествия", callback_data="travels"),
+        )
+    )
+
+
 async def travel_menu(message: Message, context: Context, travel: Travel) -> None:
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
     await message.reply_text(
-        f"<b>Путешествие «{travel.name}»</b>\n"
+        f"<b>🧳 «{travel.name}»</b>\n\n"
         f"<b>Описание:</b> «{travel.bio}».\n\n"
-        "Кнопка «Пригласить друга» предложит тебе отправить "
-        "ссылку-приглашение путникам, с которыми ты хочешь отправиться в путешествие. "
+        "Кнопка «Пригласить друга» предложит тебе "
+        "<b>отправить ссылку-приглашение путникам</b>, "
+        "с которыми ты хочешь отправиться в путешествие. "
         "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
-        reply_markup=InlineKeyboardMarkup.from_column(
-            (
-                InlineKeyboardButton(
-                    "Изменить описание", callback_data=("travel_bio", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "Список заметок", callback_data=("travel_note_list", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "Список локаций", callback_data=("travel_location_list", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "Построить маршрут",
-                    callback_data=("travel_build_full_route", travel.id),
-                ),
-                InlineKeyboardButton(
-                    "Пригласить друга",
-                    url=(
-                        "tg://msg_url?url="
-                        + create_deep_linked_url(me.username, invite_token)
-                    ),
-                ),
-            )
+        reply_markup=build_keyboard(
+            travel_id=travel.id, bot_username=me.username, invite_token=invite_token
         ),
     )
 
@@ -147,37 +155,16 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
     me = await context.bot.get_me()
     invite_token: str = await context.invite_token_repo.create(travel.id)
     await callback_query.message.edit_text(
-        f"<b>Путешествие «{travel.name}»</b>\n"
+        f"<b>🧳 «{travel.name}»</b>\n\n"
         f"<b>Описание:</b> «{travel.bio}».\n\n"
-        "Кнопка «Пригласить друга» предложит тебе отправить "
-        "ссылку-приглашение путникам, с которыми ты хочешь отправиться в путешествие. "
+        "Кнопка «Пригласить друга» предложит тебе "
+        "<b>отправить ссылку-приглашение путникам</b>, "
+        "с которыми ты хочешь отправиться в путешествие. "
         "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
     )
     await callback_query.message.edit_reply_markup(
-        InlineKeyboardMarkup.from_column(
-            (
-                InlineKeyboardButton(
-                    "Изменить описание", callback_data=("travel_bio", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "📝 Заметки", callback_data=("travel_note_list", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "📍 Локации", callback_data=("travel_location_list", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "🗺️ Маршруты",
-                    callback_data=("travel_build_full_route", travel.id),
-                ),
-                InlineKeyboardButton(
-                    "Пригласить друга",
-                    url=(
-                        "tg://msg_url?url="
-                        + create_deep_linked_url(me.username, invite_token)
-                    ),
-                ),
-                InlineKeyboardButton("<< Все путешествия", callback_data="travels"),
-            )
+        build_keyboard(
+            travel_id=travel.id, bot_username=me.username, invite_token=invite_token
         )
     )
 
@@ -186,7 +173,8 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
 @message_callback
 async def newtravel_entry(message: Message, _: Context) -> int:
     await message.reply_text(
-        "Придумайте название для путешествия, постарайтесь сделать его уникальным!\n"
+        "Придумай название для путешествия, постарайся сделать его уникальным!\n"
+        "Как говорил капитан Врунгель,"
         "<blockquote>Как корабль назовёшь, так он и поплывёт.</blockquote>"
     )
     return NewTravelState.NAME.value
