@@ -5,6 +5,7 @@ import typing
 from advanced_alchemy.base import orm_registry
 from redis.asyncio import ConnectionPool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
+from telegram import BotCommand
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
@@ -19,7 +20,6 @@ from telegram.ext import (
 
 from travel_agent import handlers
 from travel_agent.context import Context
-from travel_agent.handlers.help import help
 from travel_agent.handlers.settings import (
     back_to_settings,
     settings,
@@ -40,10 +40,19 @@ async def post_init(application: Application) -> None:
     async with engine.begin() as connection:
         await connection.run_sync(orm_registry.metadata.create_all)
 
+    await application.bot.set_my_commands(
+        (
+            BotCommand("/start", "Запустить бота"),
+            BotCommand("/settings", "Настройки профиля"),
+            BotCommand("/help", "Список команд"),
+            BotCommand("/travels", "Меню путешествий"),
+            BotCommand("/newtravel", "Создать новое путешествие"),
+        )
+    )
+
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    logging.getLogger("telegram").setLevel(logging.DEBUG)
     logging.getLogger("httpx").setLevel(logging.WARNING)
 
     application = (
@@ -52,7 +61,7 @@ def main() -> None:
         .post_init(post_init)
         .context_types(ContextTypes(Context))
         .defaults(Defaults(parse_mode=ParseMode.HTML))
-        .arbitrary_callback_data(arbitrary_callback_data=True)
+        .arbitrary_callback_data(True)  # noqa: FBT003
         .build()
     )
 
@@ -64,7 +73,7 @@ def main() -> None:
     application.bot_data["redis_pool"] = ConnectionPool.from_url(os.getenv("REDIS_URL"))
 
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(CommandHandler("help", help))
+    application.add_handlers(handlers.help.create_handlers())
 
     application.add_handler(CommandHandler("settings", settings))
     application.add_handler(CallbackQueryHandler(settings_sex, "^settings_sex$"))

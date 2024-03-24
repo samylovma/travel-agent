@@ -110,7 +110,7 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
 async def travels_cmd(message: Message, context: Context) -> None:
     user = await context.user_repo.get(message.from_user.id)
     await message.reply_text(
-        "<b>Список твоих путешествий:</b>",
+        "<b>Твои путешествия</b>",
         reply_markup=InlineKeyboardMarkup.from_column(
             [
                 InlineKeyboardButton(
@@ -126,7 +126,7 @@ async def travels_cmd(message: Message, context: Context) -> None:
 @callback_query_callback
 async def travels_button(callback_query: CallbackQuery, context: Context) -> None:
     user = await context.user_repo.get(callback_query.from_user.id)
-    await callback_query.message.edit_text("Список твоих путешествий:")
+    await callback_query.message.edit_text("<b>Твои путешествия</b>")
     await callback_query.message.edit_reply_markup(
         InlineKeyboardMarkup.from_column(
             [
@@ -160,13 +160,13 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
                     "Изменить описание", callback_data=("travel_bio", travel.id)
                 ),
                 InlineKeyboardButton(
-                    "Список заметок", callback_data=("travel_note_list", travel.id)
+                    "📝 Заметки", callback_data=("travel_note_list", travel.id)
                 ),
                 InlineKeyboardButton(
-                    "Список локаций", callback_data=("travel_location_list", travel.id)
+                    "📍 Локации", callback_data=("travel_location_list", travel.id)
                 ),
                 InlineKeyboardButton(
-                    "Построить маршрут",
+                    "🗺️ Маршруты",
                     callback_data=("travel_build_full_route", travel.id),
                 ),
                 InlineKeyboardButton(
@@ -219,7 +219,7 @@ async def newtravel_name(message: Message, context: Context) -> int:
 async def change_bio_entry(callback_query: CallbackQuery, context: Context) -> int:
     context.user_data["travel_id"] = typing.cast(int, callback_query.data[1])
     await callback_query.answer()
-    await callback_query.message.reply_text("Напишите описание для путешествия.")
+    await callback_query.message.reply_text("Придумай описание для путешествия.")
     return ChangeBioState.BIO.value
 
 
