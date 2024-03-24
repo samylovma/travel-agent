@@ -30,6 +30,9 @@ if TYPE_CHECKING:
 
 def create_handlers() -> list[BaseHandler]:
     return [
+        CallbackQueryHandler(
+            locations, lambda data: check_callback_data(data, "travel_location_list")
+        ),
         ConversationHandler(
             entry_points=[
                 CallbackQueryHandler(
@@ -46,6 +49,32 @@ def create_handlers() -> list[BaseHandler]:
             fallbacks=[],
         ),
     ]
+
+
+@middlewares
+@callback_query_callback
+async def locations(callback_query: CallbackQuery, context: Context) -> None:
+    travel_id: int = callback_query.data[1]
+    travel = await context.travel_repo.get(travel_id)
+    await callback_query.message.edit_text(
+        f"<b>Список локаций путешествия «{travel.name}»</b>\n\n"
+        + "\n".join(
+            f"«{location.name}»: с {location.start_at} по {location.end_at}."
+            for location in travel.locations
+        )
+    )
+    await callback_query.message.edit_reply_markup(
+        InlineKeyboardMarkup.from_column(
+            (
+                InlineKeyboardButton(
+                    "Добавить локацию", callback_data=("add_location", travel.id)
+                ),
+                InlineKeyboardButton(
+                    "<< К путешествию", callback_data=("travel", travel.id)
+                ),
+            )
+        ),
+    )
 
 
 @middlewares
