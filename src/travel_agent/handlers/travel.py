@@ -23,7 +23,11 @@ from telegram.helpers import create_deep_linked_url
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
 from travel_agent.models import Location, Travel
-from travel_agent.utils import callback_query, check_callback_data, message
+from travel_agent.utils import (
+    callback_query_callback,
+    check_callback_data,
+    message_callback,
+)
 
 if typing.TYPE_CHECKING:
     from travel_agent.repositories import Place
@@ -127,7 +131,7 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
 
 
 @middlewares
-@message
+@message_callback
 async def travels_cmd(message: Message, context: Context) -> None:
     user = await context.user_repo.get(message.from_user.id)
     await message.reply_text(
@@ -144,7 +148,7 @@ async def travels_cmd(message: Message, context: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def travels_button(callback_query: CallbackQuery, context: Context) -> None:
     user = await context.user_repo.get(callback_query.from_user.id)
     await callback_query.message.edit_text("Список твоих путешествий:")
@@ -161,7 +165,7 @@ async def travels_button(callback_query: CallbackQuery, context: Context) -> Non
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def travel(callback_query: CallbackQuery, context: Context) -> None:
     travel_id = typing.cast(int, callback_query.data[1])
     travel = await context.travel_repo.get(travel_id)
@@ -200,7 +204,7 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
 
 
 @middlewares
-@message
+@message_callback
 async def newtravel_entry(message: Message, _: Context) -> int:
     await message.reply_text(
         "Придумайте название для путешествия, постарайтесь сделать его уникальным!\n"
@@ -210,7 +214,7 @@ async def newtravel_entry(message: Message, _: Context) -> int:
 
 
 @middlewares
-@message
+@message_callback
 async def newtravel_name(message: Message, context: Context) -> int:
     try:
         travel = await context.travel_repo.add(Travel(name=message.text))
@@ -232,7 +236,7 @@ async def newtravel_name(message: Message, context: Context) -> int:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def change_bio_entry(callback_query: CallbackQuery, context: Context) -> int:
     context.user_data["travel_id"] = typing.cast(int, callback_query.data[1])
     await callback_query.answer()
@@ -241,7 +245,7 @@ async def change_bio_entry(callback_query: CallbackQuery, context: Context) -> i
 
 
 @middlewares
-@message
+@message_callback
 async def change_bio_end(message: Message, context: Context) -> int:
     travel_id: int = context.user_data["travel_id"]
     await context.travel_repo.update(
@@ -253,7 +257,7 @@ async def change_bio_end(message: Message, context: Context) -> int:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def note_list(callback_query: CallbackQuery, context: Context) -> None:
     travel_id: int = callback_query.data[1]
     travel = await context.travel_repo.get(travel_id)
@@ -277,7 +281,7 @@ async def note_list(callback_query: CallbackQuery, context: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def show_note(callback_query: CallbackQuery, context: Context) -> None:
     note_id: int = callback_query.data[1]
     note = await context.note_repo.get(note_id)
@@ -289,7 +293,7 @@ async def show_note(callback_query: CallbackQuery, context: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def locations(callback_query: CallbackQuery, context: Context) -> None:
     travel_id: int = callback_query.data[1]
     travel = await context.travel_repo.get(travel_id)
@@ -315,7 +319,7 @@ async def locations(callback_query: CallbackQuery, context: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def add_location_entry(callback_query: CallbackQuery, context: Context) -> int:
     travel_id: int = callback_query.data[1]
     context.user_data["travel_id"] = travel_id
@@ -325,7 +329,7 @@ async def add_location_entry(callback_query: CallbackQuery, context: Context) ->
 
 
 @middlewares
-@message
+@message_callback
 async def add_location_coord(message: Message, context: Context) -> int:
     places: list[Place] = await context.map_search_repo.search(message.text)
     await message.reply_text(
@@ -341,7 +345,7 @@ async def add_location_coord(message: Message, context: Context) -> int:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def add_location_start_at(
     callback_query: CallbackQuery, context: Context
 ) -> None:
@@ -355,7 +359,7 @@ async def add_location_start_at(
 
 
 @middlewares
-@message
+@message_callback
 async def add_location_end_at(message: Message, context: Context) -> None:
     context.user_data["start_at"] = datetime.strptime(message.text, "%d.%m.%Y").replace(
         tzinfo=UTC
@@ -367,7 +371,7 @@ async def add_location_end_at(message: Message, context: Context) -> None:
 
 
 @middlewares
-@message
+@message_callback
 async def add_location_end(message: Message, context: Context) -> int:
     travel_id: int = context.user_data["travel_id"]
     place: Place = context.user_data["place"]

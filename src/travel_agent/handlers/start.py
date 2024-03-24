@@ -2,11 +2,11 @@ import telegram
 
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
-from travel_agent.utils import get_mention, message
+from travel_agent.utils import get_mention, message_callback
 
 
 @middlewares
-@message
+@message_callback
 async def start(message: telegram.Message, context: Context) -> None:
     if context.args:
         invite_token: str = context.args[0]

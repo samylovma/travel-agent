@@ -10,7 +10,11 @@ from telegram.ext import (
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
 from travel_agent.models import Note
-from travel_agent.utils import callback_query, check_callback_data, message
+from travel_agent.utils import (
+    callback_query_callback,
+    check_callback_data,
+    message_callback,
+)
 
 
 def create_handlers() -> list[BaseHandler]:
@@ -33,7 +37,7 @@ def create_handlers() -> list[BaseHandler]:
 
 
 @middlewares
-@message
+@message_callback
 async def note_entry(message: Message, context: Context) -> int:
     note_id: str
     if message.photo:
@@ -51,7 +55,7 @@ async def note_entry(message: Message, context: Context) -> int:
 
 
 @middlewares
-@message
+@message_callback
 async def note_name(message: Message, context: Context) -> int:
     note_id = context.user_data["note_id"]
     user = await context.user_repo.get(message.from_user.id)
@@ -72,7 +76,7 @@ async def note_name(message: Message, context: Context) -> int:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def note_travel(callback_query: CallbackQuery, context: Context) -> None:
     note_id: str = callback_query.data[1]
     note_name: str = callback_query.data[2]
@@ -99,7 +103,7 @@ async def note_travel(callback_query: CallbackQuery, context: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def note_public(callback_query: CallbackQuery, context: Context) -> None:
     note_id: int = callback_query.data[1]
     note = await context.note_repo.get(note_id)

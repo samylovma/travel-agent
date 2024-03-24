@@ -8,7 +8,7 @@ from telegram import (
 from travel_agent.context import Context
 from travel_agent.middlewares import middlewares
 from travel_agent.models import SexEnum
-from travel_agent.utils import callback_query, message
+from travel_agent.utils import callback_query_callback, message_callback
 
 
 async def settings_menu(message: Message, _: Context) -> None:
@@ -38,7 +38,7 @@ async def back_to_settings_menu(message: Message, _: Context) -> None:
 
 
 @middlewares
-@message
+@message_callback
 async def settings(message: Message, _: Context) -> None:
     await message.reply_text(
         "Тут ты можешь больше рассказать о себе. :)",
@@ -52,13 +52,13 @@ async def settings(message: Message, _: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def back_to_settings(callback_query: CallbackQuery, context: Context) -> None:
     await back_to_settings_menu(callback_query.message, context)
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def settings_age(callback_query: CallbackQuery, _: Context) -> int:
     await callback_query.answer()
     await callback_query.message.reply_text(
@@ -68,7 +68,7 @@ async def settings_age(callback_query: CallbackQuery, _: Context) -> int:
 
 
 @middlewares
-@message
+@message_callback
 async def settings_age_answered(message: Message, context: Context) -> int:
     try:
         age = int(message.text)
@@ -83,7 +83,7 @@ async def settings_age_answered(message: Message, context: Context) -> int:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def settings_sex(callback_query: CallbackQuery, _: Context) -> None:
     await callback_query.message.edit_text("Выберите пол:")
     await callback_query.message.edit_reply_markup(
@@ -98,7 +98,7 @@ async def settings_sex(callback_query: CallbackQuery, _: Context) -> None:
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def settings_sex_male(callback_query: CallbackQuery, context: Context) -> None:
     user = await context.user_repo.get(callback_query.from_user.id)
     user.sex = SexEnum.male
@@ -107,7 +107,7 @@ async def settings_sex_male(callback_query: CallbackQuery, context: Context) -> 
 
 
 @middlewares
-@callback_query
+@callback_query_callback
 async def settings_sex_female(callback_query: CallbackQuery, context: Context) -> None:
     user = await context.user_repo.get(callback_query.from_user.id)
     user.sex = SexEnum.female

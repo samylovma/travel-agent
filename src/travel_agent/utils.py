@@ -7,7 +7,7 @@ from travel_agent.context import Context
 from travel_agent.types import Callback, CallbackQueryCallback, MessageCallback
 
 
-def message(function: MessageCallback) -> Callback:
+def message_callback(function: MessageCallback) -> Callback:
     @functools.wraps(function)
     async def wrapped(update: tg.Update, context: Context) -> None:
         if update.message is None:
@@ -18,7 +18,7 @@ def message(function: MessageCallback) -> Callback:
     return wrapped
 
 
-def callback_query(function: CallbackQueryCallback) -> Callback:
+def callback_query_callback(function: CallbackQueryCallback) -> Callback:
     @functools.wraps(function)
     async def wrapped(update: tg.Update, context: Context) -> None:
         if update.callback_query is None:
