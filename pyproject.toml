@@ -12,6 +12,7 @@ dependencies = [
     "advanced-alchemy>=0.7.4",
     "asyncpg>=0.29.0",
     "redis[hiredis]>=5.0.3",
+    "staticmap>=0.5.7",
 ]
 
 [tool.ruff.lint]

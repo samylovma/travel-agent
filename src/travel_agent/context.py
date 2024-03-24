@@ -7,6 +7,7 @@ from travel_agent.repositories import (
     LocationRepository,
     MapSearchRepository,
     NoteRepository,
+    RouteRepository,
     TravelRepository,
     UserRepository,
 )
@@ -33,6 +34,7 @@ class Context(CallbackContext):
         self._location_repo: LocationRepository | None = None
         self._invite_token_repository: InviteTokenRepository | None = None
         self._map_search_repo: MapSearchRepository | None = None
+        self._route_repo: RouteRepository | None = None
 
     @property
     def user_repo(self: Self) -> UserRepository:
@@ -81,3 +83,9 @@ class Context(CallbackContext):
                 client=self.data["httpx_client"]
             )
         return self._map_search_repo
+
+    @property
+    def route_repo(self: Self) -> RouteRepository:
+        if self._route_repo is None:
+            self._route_repo = RouteRepository(client=self.data["httpx_client"])
+        return self._route_repo

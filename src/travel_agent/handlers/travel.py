@@ -90,6 +90,10 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
                     "Список локаций", callback_data=("travel_location_list", travel.id)
                 ),
                 InlineKeyboardButton(
+                    "Построить маршрут",
+                    callback_data=("travel_build_full_route", travel.id),
+                ),
+                InlineKeyboardButton(
                     "Пригласить друга",
                     url=(
                         "tg://msg_url?url="
@@ -160,6 +164,10 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
                 ),
                 InlineKeyboardButton(
                     "Список локаций", callback_data=("travel_location_list", travel.id)
+                ),
+                InlineKeyboardButton(
+                    "Построить маршрут",
+                    callback_data=("travel_build_full_route", travel.id),
                 ),
                 InlineKeyboardButton(
                     "Пригласить друга",

@@ -80,3 +80,23 @@ class MapSearchRepository:
             )
             for place in data
         ]
+
+
+class RouteRepository:
+    def __init__(self: typing.Self, client: httpx.AsyncClient) -> None:
+        self.client = client
+
+    async def create_car_route(
+        self: typing.Self, *args: tuple[float, float]
+    ) -> list[tuple[float, float]]:
+        coordinates = ";".join([f"{arg[0]},{arg[1]}" for arg in args])
+        response = await self.client.get(
+            f"https://router.project-osrm.org/route/v1/car/{coordinates}.json",
+            params={
+                "geometries": "geojson",
+                "overview": "simplified",
+            },
+        )
+        if not response.is_success:
+            raise
+        return response.json()["routes"][0]["geometry"]["coordinates"]

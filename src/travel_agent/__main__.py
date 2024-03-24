@@ -89,6 +89,7 @@ def main() -> None:
     application.add_handlers(handlers.travel.create_handlers())
     application.add_handlers(handlers.note.create_handlers())
     application.add_handlers(handlers.locations.create_handlers())
+    application.add_handlers(handlers.routes.create_handlers())
 
     application.run_polling()
 
