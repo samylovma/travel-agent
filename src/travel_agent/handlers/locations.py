@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, cast
 
 from telegram import (
@@ -80,7 +80,6 @@ async def locations(callback_query: CallbackQuery, context: Context) -> None:
 @middlewares
 @callback_query_callback
 async def add_location_entry(callback_query: CallbackQuery, context: Context) -> int:
-    callback_query.message = cast(Message, callback_query.message)
     travel_id = cast(int, callback_query.data[1])  # type: ignore[index]
     context.user_data["travel_id"] = travel_id  # type: ignore[index]
     await callback_query.answer()
@@ -121,9 +120,8 @@ async def add_location_start_at(
 @middlewares
 @message_callback
 async def add_location_end_at(message: Message, context: Context) -> None:
-    context.user_data["start_at"] = datetime.strptime(message.text, "%d.%m.%Y").replace(
-        tzinfo=UTC
-    )
+    dt = datetime.strptime(message.text, "%d.%m.%Y").replace(tzinfo=UTC)
+    context.user_data["start_at"] = dt.date()
     await message.reply_text(
         "А до какого числа там задержитесь? Отправьте в формате ДД.ММ.ГГГГ."
     )
@@ -135,13 +133,17 @@ async def add_location_end_at(message: Message, context: Context) -> None:
 async def add_location_end(message: Message, context: Context) -> int:
     travel_id: int = context.user_data["travel_id"]
     place: Place = context.user_data["place"]
-    start_at: datetime = context.user_data["start_at"]
-    end_at = datetime.strptime(message.text, "%d.%m.%Y").replace(tzinfo=UTC)
+    start_at: date = context.user_data["start_at"]
+
+    dt = datetime.strptime(message.text, "%d.%m.%Y").replace(tzinfo=UTC)
+    end_at: date = dt.date()
+
     if end_at < start_at:
         await message.reply_text(
             "Проверьте, дата конца пребывания должна быть позже даты начала."
         )
         return 4
+
     await context.location_repo.add(
         Location(
             travel_id=travel_id,

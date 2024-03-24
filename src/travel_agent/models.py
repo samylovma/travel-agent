@@ -1,11 +1,10 @@
 import enum
-from datetime import datetime
+from datetime import date
 
 from advanced_alchemy.base import CommonTableAttributes, orm_registry
 from sqlalchemy import (
     BigInteger,
     Column,
-    DateTime,
     Enum,
     ForeignKey,
     Table,
@@ -68,8 +67,8 @@ class Location(Base):
     name: Mapped[str]
     lat: Mapped[float]
     lon: Mapped[float]
-    start_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
-    end_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    start_at: Mapped[date]
+    end_at: Mapped[date]
 
 
 class Note(Base):
