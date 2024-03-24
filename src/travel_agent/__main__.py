@@ -17,8 +17,8 @@ from telegram.ext import (
     filters,
 )
 
+from travel_agent import handlers
 from travel_agent.context import Context
-from travel_agent.handlers import note, travel
 from travel_agent.handlers.help import help
 from travel_agent.handlers.settings import (
     back_to_settings,
@@ -86,8 +86,9 @@ def main() -> None:
         )
     )
 
-    application.add_handlers(travel.create_handlers())
-    application.add_handlers(note.create_handlers())
+    application.add_handlers(handlers.travel.create_handlers())
+    application.add_handlers(handlers.note.create_handlers())
+    application.add_handlers(handlers.locations.create_handlers())
 
     application.run_polling()
 
