@@ -5,7 +5,7 @@
 groups = ["default", "lint"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:54b6b66f14f3af555e03db76748800d2b151cfc7e8ceee7eec3d20081c795444"
+content_hash = "sha256:4d8ad0f9217bcdeaaa22ad133b399da374ed735012ab29334223f1f4f2ec5613"
 
 [[package]]
 name = "advanced-alchemy"
@@ -74,6 +74,28 @@ files = [
 ]
 
 [[package]]
+name = "attrs"
+version = "23.2.0"
+requires_python = ">=3.7"
+summary = "Classes Without Boilerplate"
+groups = ["default"]
+files = [
+    {file = "attrs-23.2.0-py3-none-any.whl", hash = "sha256:99b87a485a5820b23b879f04c2305b44b951b502fd64be915879d77a7e8fc6f1"},
+    {file = "attrs-23.2.0.tar.gz", hash = "sha256:935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30"},
+]
+
+[[package]]
+name = "babel"
+version = "2.14.0"
+requires_python = ">=3.7"
+summary = "Internationalization utilities"
+groups = ["default"]
+files = [
+    {file = "Babel-2.14.0-py3-none-any.whl", hash = "sha256:efb1a25b7118e67ce3a259bed20545c29cb68be8ad2c784c83689981b7a57287"},
+    {file = "Babel-2.14.0.tar.gz", hash = "sha256:6919867db036398ba21eb5c7a0f6b28ab8cbc3ae7a73a44ebe34ae74a4e7d363"},
+]
+
+[[package]]
 name = "cachetools"
 version = "5.3.3"
 requires_python = ">=3.7"
@@ -119,6 +141,35 @@ files = [
     {file = "charset_normalizer-3.3.2-cp312-cp312-win32.whl", hash = "sha256:d965bba47ddeec8cd560687584e88cf699fd28f192ceb452d1d7ee807c5597b7"},
     {file = "charset_normalizer-3.3.2-cp312-cp312-win_amd64.whl", hash = "sha256:96b02a3dc4381e5494fad39be677abcb5e6634bf7b4fa83a6dd3112607547001"},
     {file = "charset_normalizer-3.3.2-py3-none-any.whl", hash = "sha256:3e4d1f6587322d2788836a99c69062fbb091331ec940e02d12d179c1d53e25fc"},
+]
+
+[[package]]
+name = "fluent-compiler"
+version = "1.0"
+summary = "Blazing fast implementation of Fluent localization language."
+groups = ["default"]
+dependencies = [
+    "attrs>=19.3.0",
+    "babel>=2.8.0",
+    "fluent-syntax>=0.14",
+    "pytz",
+]
+files = [
+    {file = "fluent_compiler-1.0-py3-none-any.whl", hash = "sha256:6af462ea2ee2b63cff1d74f86b44d6324ee4111746435a963a2a91bb4ce2c1de"},
+    {file = "fluent_compiler-1.0.tar.gz", hash = "sha256:277ea32bfea80c968dcb0b0b59a37501bc17f1bdf4ee0fe5b41984906931efb7"},
+]
+
+[[package]]
+name = "fluent-syntax"
+version = "0.19.0"
+summary = "Localization library for expressive translations."
+groups = ["default"]
+dependencies = [
+    "typing-extensions<5,>=3.7",
+]
+files = [
+    {file = "fluent.syntax-0.19.0-py2.py3-none-any.whl", hash = "sha256:b352b3475fac6c6ed5f06527921f432aac073d764445508ee5218aeccc7cc5c4"},
+    {file = "fluent.syntax-0.19.0.tar.gz", hash = "sha256:920326d7f46864b9758f0044e9968e3112198bc826acee16ddd8f11d359004fd"},
 ]
 
 [[package]]
@@ -368,6 +419,16 @@ dependencies = [
 files = [
     {file = "python-telegram-bot-21.0.1.tar.gz", hash = "sha256:3e005962c9fda01b09480044c49b3dd70870ee0c63340374bf3d5191e3910be9"},
     {file = "python_telegram_bot-21.0.1-py3-none-any.whl", hash = "sha256:b282544d1a51bf228b868e2ce0285b8448982878e2362175836429722d6f8795"},
+]
+
+[[package]]
+name = "pytz"
+version = "2024.1"
+summary = "World timezone definitions, modern and historical"
+groups = ["default"]
+files = [
+    {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
+    {file = "pytz-2024.1.tar.gz", hash = "sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812"},
 ]
 
 [[package]]

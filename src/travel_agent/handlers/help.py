@@ -12,10 +12,5 @@ def create_handlers() -> list[BaseHandler]:
 
 @middlewares
 @message_callback
-async def help_callback(message: Message, _: Context) -> None:
-    await message.reply_text(
-        "<b>Мои команды</b>\n\n"
-        "/settings — настройки профиля.\n"
-        "/travels — меню путешествий.\n"
-        "/newtravel — создать путешествие."
-    )
+async def help_callback(message: Message, context: Context) -> None:
+    await message.reply_text(context.l10n.format("help")[0])

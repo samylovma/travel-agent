@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Any, Self
 
+from fluent_compiler.bundle import FluentBundle
 from telegram.ext import Application, CallbackContext
 
 from travel_agent.repositories import (
@@ -89,3 +90,7 @@ class Context(CallbackContext):
         if self._route_repo is None:
             self._route_repo = RouteRepository(client=self.data["httpx_client"])
         return self._route_repo
+
+    @property
+    def l10n(self: Self) -> FluentBundle:
+        return self.data["l10n"]
