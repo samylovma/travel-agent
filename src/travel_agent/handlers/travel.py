@@ -73,15 +73,17 @@ def build_keyboard(travel_id: int, bot_username: str, invite_token: str) -> None
     return InlineKeyboardMarkup.from_column(
         (
             InlineKeyboardButton(
-                "📝 Изменить описание", callback_data=("travel_bio", travel_id)
-            ),
-            InlineKeyboardButton(
                 "🗒️ Заметки", callback_data=("travel_note_list", travel_id)
             ),
-            InlineKeyboardButton("📍 Локации", callback_data=("locations", travel_id)),
             InlineKeyboardButton(
                 "🗺️ Маршрут",
                 callback_data=("travel_build_full_route", travel_id),
+            ),
+            InlineKeyboardButton(
+                "📍 Добавить локацию", callback_data=("newlocation", travel_id)
+            ),
+            InlineKeyboardButton(
+                "📝 Изменить описание", callback_data=("travel_bio", travel_id)
             ),
             InlineKeyboardButton(
                 "🔗 Пригласить",
@@ -100,12 +102,12 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
     invite_token: str = await context.invite_token_repo.create(travel.id)
     bio = travel.bio if travel.bio is not None else ""
     await message.reply_text(
-        f"<b>🧳 «{travel.name}»</b>\n\n"
-        f"<b>Описание:</b> «{bio}».\n\n"
-        "Кнопка «Пригласить» предложит тебе "
-        "<b>отправить ссылку-приглашение путникам</b>, "
-        "с которыми ты хочешь отправиться в путешествие. "
-        "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
+        f"<b>🧳 «{travel.name}»</b>\n\n<b>Описание:</b> «{bio}».\n\n"
+        + "\n\n".join(
+            f"<b>{location.start_at.strftime('%d.%m.%Y')}—{location.end_at.strftime('%d.%m.%Y')}</b>\n"
+            f"<b>«{location.name}»</b> "
+            for location in travel.locations
+        ),
         reply_markup=build_keyboard(
             travel_id=travel.id, bot_username=me.username, invite_token=invite_token
         ),
@@ -117,7 +119,7 @@ async def travel_menu(message: Message, context: Context, travel: Travel) -> Non
 async def travels_cmd(message: Message, context: Context) -> None:
     user = await context.user_repo.get(message.from_user.id)
     await message.reply_text(
-        "<b>Твои путешествия</b>",
+        "<b>Путешествия</b>",
         reply_markup=InlineKeyboardMarkup.from_column(
             [
                 InlineKeyboardButton(
@@ -133,7 +135,7 @@ async def travels_cmd(message: Message, context: Context) -> None:
 @callback_query_callback
 async def travels_button(callback_query: CallbackQuery, context: Context) -> None:
     user = await context.user_repo.get(callback_query.from_user.id)
-    await callback_query.message.edit_text("<b>Твои путешествия</b>")
+    await callback_query.message.edit_text("<b>Путешествия</b>")
     await callback_query.message.edit_reply_markup(
         InlineKeyboardMarkup.from_column(
             [
@@ -155,12 +157,12 @@ async def travel(callback_query: CallbackQuery, context: Context) -> None:
     invite_token: str = await context.invite_token_repo.create(travel.id)
     bio = travel.bio if travel.bio is not None else ""
     await callback_query.message.edit_text(
-        f"<b>🧳 «{travel.name}»</b>\n\n"
-        f"<b>Описание:</b> «{bio}».\n\n"
-        "Кнопка «Пригласить» предложит тебе "
-        "<b>отправить ссылку-приглашение путникам</b>, "
-        "с которыми ты хочешь отправиться в путешествие. "
-        "Ссылка действует ~ 24 часа с момента отправки этого сообщения.",
+        f"<b>🧳 «{travel.name}»</b>\n\n<b>Описание:</b> «{bio}».\n\n"
+        + "\n\n".join(
+            f"<b>{location.start_at.strftime('%d.%m.%Y')}—{location.end_at.strftime('%d.%m.%Y')}</b>\n"
+            f"<b>«{location.name}»</b> "
+            for location in travel.locations
+        ),
     )
     await callback_query.message.edit_reply_markup(
         build_keyboard(

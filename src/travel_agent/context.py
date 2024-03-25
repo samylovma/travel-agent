@@ -93,4 +93,4 @@ class Context(CallbackContext):
 
     @property
     def l10n(self: Self) -> FluentBundle:
-        return self.data["l10n"]
+        return self.bot_data["l10n"]

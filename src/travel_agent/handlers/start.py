@@ -34,4 +34,4 @@ async def start(message: telegram.Message, context: Context) -> None:
             )
         return
 
-    await message.reply_text(context.l10n.format("start")[0])
+    await message.reply_text(context.l10n.get("start"))

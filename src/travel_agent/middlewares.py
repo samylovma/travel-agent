@@ -2,11 +2,9 @@ import functools
 import typing
 
 import httpx
-from fluent_compiler.bundle import FluentBundle
 from redis.asyncio import Redis
 from telegram import Update
 
-from travel_agent.constants import LOCALES_DIR
 from travel_agent.context import Context
 from travel_agent.models import User
 from travel_agent.types import Callback
@@ -28,10 +26,6 @@ def middlewares(function: Callback) -> Callback:
 
         httpx_client = httpx.AsyncClient()
         context.data["httpx_client"] = httpx_client
-
-        # TODO: FluentBundle.from_files reads files every time. We should read it once.
-        l10n = FluentBundle.from_files("ru", [LOCALES_DIR / "ru.ftl"])
-        context.data["l10n"] = l10n
 
         try:
             user = await context.user_repo.get_one_or_none(id=update.effective_user.id)

@@ -3,6 +3,7 @@ import os
 import typing
 
 from advanced_alchemy.base import orm_registry
+from fluent_compiler.bundle import FluentBundle
 from redis.asyncio import ConnectionPool
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, create_async_engine
 from telegram import BotCommand
@@ -19,6 +20,7 @@ from telegram.ext import (
 )
 
 from travel_agent import handlers
+from travel_agent.constants import LOCALES_DIR
 from travel_agent.context import Context
 from travel_agent.handlers.settings import (
     back_to_settings,
@@ -30,6 +32,7 @@ from travel_agent.handlers.settings import (
     settings_sex_male,
 )
 from travel_agent.handlers.start import start
+from travel_agent.l10n import Localization
 
 if typing.TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncEngine
@@ -71,6 +74,10 @@ def main() -> None:
     )
 
     application.bot_data["redis_pool"] = ConnectionPool.from_url(os.getenv("REDIS_URL"))
+
+    application.bot_data["l10n"] = Localization(
+        FluentBundle.from_files("ru", [LOCALES_DIR / "ru.ftl"])
+    )
 
     application.add_handler(CommandHandler("start", start))
     application.add_handlers(handlers.help.create_handlers())

@@ -14,3 +14,8 @@ help =
 
 add-location-button = Добавить локацию
 back-to-travel-button = << К путешествию
+
+travel =
+    <b>🧳 «{name}»</b>
+
+    <b>Описание:</b> «{bio}».

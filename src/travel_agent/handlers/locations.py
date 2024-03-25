@@ -1,7 +1,6 @@
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, cast
 
-from fluent_compiler.bundle import FluentBundle
 from telegram import (
     CallbackQuery,
     InlineKeyboardButton,
@@ -17,6 +16,7 @@ from telegram.ext import (
 )
 
 from travel_agent.context import Context
+from travel_agent.handlers.travel import travel_menu
 from travel_agent.middlewares import middlewares
 from travel_agent.models import Location
 from travel_agent.utils import (
@@ -31,9 +31,6 @@ if TYPE_CHECKING:
 
 def create_handlers() -> list[BaseHandler]:
     return [
-        CallbackQueryHandler(
-            locations, lambda data: check_callback_data(data, "locations")
-        ),
         ConversationHandler(
             entry_points=[
                 CallbackQueryHandler(
@@ -50,42 +47,6 @@ def create_handlers() -> list[BaseHandler]:
             fallbacks=[],
         ),
     ]
-
-
-def build_location_menu_keyboard(
-    l10n: FluentBundle, travel_id: int
-) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup.from_column(
-        (
-            InlineKeyboardButton(
-                l10n.format("add-location-button")[0],
-                callback_data=("newlocation", travel_id),
-            ),
-            InlineKeyboardButton(
-                l10n.format("back-to-travel-button")[0],
-                callback_data=("travel", travel_id),
-            ),
-        )
-    )
-
-
-@middlewares
-@callback_query_callback
-async def locations(callback_query: CallbackQuery, context: Context) -> None:
-    travel_id: int = callback_query.data[1]
-    travel = await context.travel_repo.get(travel_id)
-    await callback_query.message.edit_text(
-        f"<b>Локации путешествия «{travel.name}»</b>\n\n"
-        + "\n".join(
-            f"<b>«{location.name}»:</b> "
-            f"с {location.start_at.strftime('%d.%m.%Y')} "
-            f"по {location.end_at.strftime('%d.%m.%Y')}."
-            for location in travel.locations
-        )
-    )
-    await callback_query.message.edit_reply_markup(
-        build_location_menu_keyboard(context.l10n, travel.id)
-    )
 
 
 @middlewares
@@ -167,15 +128,6 @@ async def add_location_end(message: Message, context: Context) -> int:
     )
 
     travel = await context.travel_repo.get(travel_id)
-    await message.reply_text(
-        f"<b>Локации путешествия «{travel.name}»</b>\n\n"
-        + "\n".join(
-            f"<b>«{location.name}»:</b> "
-            f"с {location.start_at.strftime('%d.%m.%Y')} "
-            f"по {location.end_at.strftime('%d.%m.%Y')}."
-            for location in travel.locations
-        ),
-        reply_markup=build_location_menu_keyboard(context.l10n, travel.id),
-    )
+    await travel_menu(message, context, travel)
 
     return ConversationHandler.END

@@ -13,4 +13,4 @@ def create_handlers() -> list[BaseHandler]:
 @middlewares
 @message_callback
 async def help_callback(message: Message, context: Context) -> None:
-    await message.reply_text(context.l10n.format("help")[0])
+    await message.reply_text(context.l10n.get("help"))
