@@ -45,6 +45,9 @@ def create_handlers() -> list[BaseHandler]:
             travels_button, lambda data: check_callback_data(data, "travels")
         ),
         CallbackQueryHandler(travel, lambda data: check_callback_data(data, "travel")),
+        CallbackQueryHandler(
+            rmtravel, lambda data: check_callback_data(data, "rmtravel")
+        ),
         ConversationHandler(
             entry_points=[CommandHandler("newtravel", newtravel_entry)],
             states={
@@ -85,6 +88,7 @@ def build_keyboard(travel_id: int, bot_username: str, invite_token: str) -> None
             InlineKeyboardButton(
                 "📝 Изменить описание", callback_data=("travel_bio", travel_id)
             ),
+            InlineKeyboardButton("❌ Удалить", callback_data=("rmtravel", travel_id)),
             InlineKeyboardButton(
                 "🔗 Пригласить",
                 url=(
@@ -126,6 +130,7 @@ async def travels_cmd(message: Message, context: Context) -> None:
                     f"«{travel.name}»", callback_data=("travel", travel.id)
                 )
                 for travel in user.travels
+                if travel.is_deleted is False
             ]
         ),
     )
@@ -143,6 +148,7 @@ async def travels_button(callback_query: CallbackQuery, context: Context) -> Non
                     f"«{travel.name}»", callback_data=("travel", travel.id)
                 )
                 for travel in user.travels
+                if travel.is_deleted is False
             ]
         )
     )
@@ -224,3 +230,28 @@ async def change_bio_end(message: Message, context: Context) -> int:
     travel = await context.travel_repo.get(travel_id)
     await travel_menu(message, context, travel)
     return ChangeBioState.END.value
+
+
+@middlewares
+@callback_query_callback
+async def rmtravel(callback_query: CallbackQuery, context: Context) -> None:
+    travel_id: int = callback_query.data[1]
+
+    travel = await context.travel_repo.get(travel_id)
+    travel.is_deleted = True
+    await context.travel_repo.update(travel)
+    await callback_query.answer("Удалено!")
+
+    user = await context.user_repo.get(callback_query.from_user.id)
+    await callback_query.edit_message_text("<b>Путешествия</b>")
+    await callback_query.edit_message_reply_markup(
+        InlineKeyboardMarkup.from_column(
+            [
+                InlineKeyboardButton(
+                    f"«{travel.name}»", callback_data=("travel", travel.id)
+                )
+                for travel in user.travels
+                if travel.is_deleted is False
+            ]
+        ),
+    )

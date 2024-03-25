@@ -87,6 +87,7 @@ class Travel(Base):
     )
     name: Mapped[str] = mapped_column(unique=True)
     bio: Mapped[str | None]
+    is_deleted: Mapped[bool] = mapped_column(default=False)
 
     locations: Mapped[list[Location]] = relationship(
         lazy="selectin", order_by="asc(Location.start_at)"
