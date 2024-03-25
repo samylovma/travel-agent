@@ -11,3 +11,6 @@ help =
     /settings — настройки профиля.
     /travels — меню путешествий.
     /newtravel — создать путешествие.
+
+add-location-button = Добавить локацию
+back-to-travel-button = << К путешествию

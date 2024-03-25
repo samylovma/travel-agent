@@ -78,9 +78,7 @@ def build_keyboard(travel_id: int, bot_username: str, invite_token: str) -> None
             InlineKeyboardButton(
                 "🗒️ Заметки", callback_data=("travel_note_list", travel_id)
             ),
-            InlineKeyboardButton(
-                "📍 Локации", callback_data=("travel_location_list", travel_id)
-            ),
+            InlineKeyboardButton("📍 Локации", callback_data=("locations", travel_id)),
             InlineKeyboardButton(
                 "🗺️ Маршрут",
                 callback_data=("travel_build_full_route", travel_id),

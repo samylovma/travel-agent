@@ -1,6 +1,7 @@
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, cast
 
+from fluent_compiler.bundle import FluentBundle
 from telegram import (
     CallbackQuery,
     InlineKeyboardButton,
@@ -31,13 +32,13 @@ if TYPE_CHECKING:
 def create_handlers() -> list[BaseHandler]:
     return [
         CallbackQueryHandler(
-            locations, lambda data: check_callback_data(data, "travel_location_list")
+            locations, lambda data: check_callback_data(data, "locations")
         ),
         ConversationHandler(
             entry_points=[
                 CallbackQueryHandler(
                     add_location_entry,
-                    lambda data: check_callback_data(data, "add_location"),
+                    lambda data: check_callback_data(data, "newlocation"),
                 )
             ],
             states={
@@ -49,6 +50,23 @@ def create_handlers() -> list[BaseHandler]:
             fallbacks=[],
         ),
     ]
+
+
+def build_location_menu_keyboard(
+    l10n: FluentBundle, travel_id: int
+) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup.from_column(
+        (
+            InlineKeyboardButton(
+                l10n.format("add-location-button")[0],
+                callback_data=("newlocation", travel_id),
+            ),
+            InlineKeyboardButton(
+                l10n.format("back-to-travel-button")[0],
+                callback_data=("travel", travel_id),
+            ),
+        )
+    )
 
 
 @middlewares
@@ -66,16 +84,7 @@ async def locations(callback_query: CallbackQuery, context: Context) -> None:
         )
     )
     await callback_query.message.edit_reply_markup(
-        InlineKeyboardMarkup.from_column(
-            (
-                InlineKeyboardButton(
-                    "Добавить локацию", callback_data=("add_location", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "<< К путешествию", callback_data=("travel", travel.id)
-                ),
-            )
-        ),
+        build_location_menu_keyboard(context.l10n, travel.id)
     )
 
 
@@ -166,16 +175,7 @@ async def add_location_end(message: Message, context: Context) -> int:
             f"по {location.end_at.strftime('%d.%m.%Y')}."
             for location in travel.locations
         ),
-        reply_markup=InlineKeyboardMarkup.from_column(
-            (
-                InlineKeyboardButton(
-                    "Добавить локацию", callback_data=("add_location", travel.id)
-                ),
-                InlineKeyboardButton(
-                    "<< К путешествию", callback_data=("travel", travel.id)
-                ),
-            )
-        ),
+        reply_markup=build_location_menu_keyboard(context.l10n, travel.id),
     )
 
     return ConversationHandler.END
