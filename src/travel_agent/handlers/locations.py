@@ -81,8 +81,7 @@ async def add_location_start_at(
     callback_query: CallbackQuery, context: Context
 ) -> None:
     context.user_data["place"] = callback_query.data
-    await callback_query.answer()
-    await callback_query.message.reply_text(
+    await callback_query.edit_message_text(
         "Отличное место! "
         "С какой даты вы планируете там быть? Отправьте в формате ДД.ММ.ГГГГ."
     )
