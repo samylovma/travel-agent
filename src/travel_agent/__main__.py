@@ -10,27 +10,14 @@ from telegram import BotCommand
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
-    CallbackQueryHandler,
     CommandHandler,
     ContextTypes,
-    ConversationHandler,
     Defaults,
-    MessageHandler,
-    filters,
 )
 
 from travel_agent import handlers
 from travel_agent.constants import LOCALES_DIR
 from travel_agent.context import Context
-from travel_agent.handlers.settings import (
-    back_to_settings,
-    settings,
-    settings_age,
-    settings_age_answered,
-    settings_sex,
-    settings_sex_female,
-    settings_sex_male,
-)
 from travel_agent.handlers.start import start
 from travel_agent.l10n import Localization
 
@@ -81,27 +68,7 @@ def main() -> None:
 
     application.add_handler(CommandHandler("start", start))
     application.add_handlers(handlers.help.create_handlers())
-
-    application.add_handler(CommandHandler("settings", settings))
-    application.add_handler(CallbackQueryHandler(settings_sex, "^settings_sex$"))
-    application.add_handler(
-        CallbackQueryHandler(settings_sex_male, "^settings_sex_male$")
-    )
-    application.add_handler(
-        CallbackQueryHandler(settings_sex_female, "^settings_sex_female$")
-    )
-    application.add_handler(
-        CallbackQueryHandler(back_to_settings, "^settings_sex_back$")
-    )
-
-    application.add_handler(
-        ConversationHandler(
-            entry_points=[CallbackQueryHandler(settings_age, "^settings_age$")],
-            states={1: [MessageHandler(filters.TEXT, settings_age_answered)]},
-            fallbacks=[],
-        )
-    )
-
+    application.add_handlers(handlers.settings.create_handlers())
     application.add_handlers(handlers.travel.create_handlers())
     application.add_handlers(handlers.note.create_handlers())
     application.add_handlers(handlers.locations.create_handlers())
