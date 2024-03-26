@@ -1,6 +1,6 @@
 # Travel Agent Bot
 
-[@travel_agent_samylovma_bot](https://t.me/travel_agent_samylovma_bot).
+[@travel_agent_samylovma_bot](https://t.me/travel_agent_samylovma_bot)
 
 ## Запуск
 
