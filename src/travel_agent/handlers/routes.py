@@ -29,9 +29,14 @@ async def build_route_of_travel(
     travel = await context.travel_repo.get(travel_id)
     await callback_query.answer()
 
-    route = await context.route_repo.create_car_route(
-        *[(location.lon, location.lat) for location in travel.locations]
-    )
+    points = [(location.lon, location.lat) for location in travel.locations]
+
+    user = await context.user_repo.get(callback_query.from_user.id)
+    if user.city and user.country:
+        places = await context.map_search_repo.search(f"{user.country}, {user.city}")
+        points.insert(0, (places[0].lon, places[0].lat))
+
+    route = await context.route_repo.create_car_route(*points)
 
     await context.bot.send_chat_action(
         chat_id=callback_query.message.chat.id, action=ChatAction.UPLOAD_PHOTO
@@ -41,10 +46,8 @@ async def build_route_of_travel(
     # We should rewrite it for asyncio.
     route_map = staticmap.StaticMap(1024, 1024)
     route_map.add_line(staticmap.Line(route, "blue", 3))
-    for location in travel.locations:
-        route_map.add_marker(
-            staticmap.CircleMarker((location.lon, location.lat), "blue", 10)
-        )
+    for point in points:
+        route_map.add_marker(staticmap.CircleMarker(point, "blue", 10))
     image = route_map.render()
 
     with io.BytesIO() as fp:
