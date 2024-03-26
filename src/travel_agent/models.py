@@ -55,6 +55,7 @@ class User(Base):
 
     travels: Mapped[list["Travel"]] = relationship(
         secondary=user_to_travel_table,
+        back_populates="users",
         lazy="selectin",
         order_by="asc(Travel.id)",
     )
@@ -93,3 +94,6 @@ class Travel(Base):
         lazy="selectin", order_by="asc(Location.start_at)"
     )
     notes: Mapped[list[Note]] = relationship(lazy="selectin")
+    users: Mapped[list[User]] = relationship(
+        secondary=user_to_travel_table, back_populates="travels", lazy="selectin"
+    )
