@@ -41,6 +41,10 @@ async def build_route_of_travel(
     # We should rewrite it for asyncio.
     route_map = staticmap.StaticMap(1024, 1024)
     route_map.add_line(staticmap.Line(route, "blue", 3))
+    for location in travel.locations:
+        route_map.add_marker(
+            staticmap.CircleMarker((location.lon, location.lat), "blue", 10)
+        )
     image = route_map.render()
 
     with io.BytesIO() as fp:
