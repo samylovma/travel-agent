@@ -9,7 +9,7 @@ content_hash = "sha256:4d8ad0f9217bcdeaaa22ad133b399da374ed735012ab29334223f1f4f
 
 [[package]]
 name = "advanced-alchemy"
-version = "0.8.0"
+version = "0.8.1"
 requires_python = ">=3.8"
 summary = "Ready-to-go SQLAlchemy concoctions."
 groups = ["default"]
@@ -20,8 +20,8 @@ dependencies = [
     "typing-extensions>=4.0.0",
 ]
 files = [
-    {file = "advanced_alchemy-0.8.0-py3-none-any.whl", hash = "sha256:8b477913bbe6313ef3cfb02a242247c775c4a1433fe0946cd5ae83273247b666"},
-    {file = "advanced_alchemy-0.8.0.tar.gz", hash = "sha256:0904cdd9a4f50c0d74dd328a15d5ef84883698b250c6d0503107721ce76412c2"},
+    {file = "advanced_alchemy-0.8.1-py3-none-any.whl", hash = "sha256:85078584914c7e7562fb7f0c750e4c8be9a14f43d52ab422b3a621170f04635f"},
+    {file = "advanced_alchemy-0.8.1.tar.gz", hash = "sha256:13921d8c47d608f63ad7f16347bd49b9c23e444dd8da62b8841e08b2367d4227"},
 ]
 
 [[package]]
